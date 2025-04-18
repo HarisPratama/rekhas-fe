@@ -15,6 +15,14 @@ export interface Product {
   checkpointStocks?: Stock[];
 }
 
+export interface ProductDropdown {
+  id: number;
+  name: string;
+  code: string;
+  fabric: string;
+  type: string;
+}
+
 export interface Checkpoint {
   id: number;
   name: string;

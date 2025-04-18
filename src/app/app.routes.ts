@@ -10,6 +10,10 @@ import {
   ReadyToWearDetailComponent
 } from './pages/product/ready-to-wear/ready-to-wear-detail/ready-to-wear-detail.component';
 import {SizeMeasureComponent} from './pages/product/size-measure/size-measure.component';
+import {CartComponent} from './pages/cart/cart.component';
+import {OrderSummaryComponent} from './pages/order-summary/order-summary.component';
+import {InvoiceComponent} from './pages/invoice/invoice.component';
+import {WorkshopComponent} from './pages/workshop/workshop.component';
 
 export const routes: Routes = [
   {
@@ -26,6 +30,10 @@ export const routes: Routes = [
           { path: 'size-measure/:id', component: SizeMeasureComponent },
         ]
       },
+      { path: 'cart', component: CartComponent },
+      { path: 'order-summary/:cartId', component: OrderSummaryComponent },
+      { path: 'invoice', component: InvoiceComponent },
+      { path: 'workshop', component: WorkshopComponent },
       // Add other children like invoice, delivery, etc.
     ]
   }
