@@ -1,0 +1,44 @@
+<h2>🧾 Order</h2>
+
+<div class="order-tabs">
+  <p-button severity="contrast">Transactions</p-button>
+  <p-button severity="secondary">Customers</p-button>
+  <p-button severity="secondary">Items</p-button>
+</div>
+
+<input type="text" placeholder="Search orders" class="search-bar" />
+
+<div class="action-buttons">
+  <p-button severity="contrast">Filter</p-button>
+  <p-button severity="contrast">Select</p-button>
+  <p-button severity="contrast">Download</p-button>
+</div>
+
+<!-- Order Table -->
+<app-generic-table
+  [data]="virtualOrders"
+  [cols]="cols"
+  [first]="first"
+  [rows]="rows"
+  [totalRecords]="orderService.pagination.total"
+  [loading]="loading"
+  (lazyLoad)="onLazyLoad($event)"
+  (pageChange)="onPageChange($event)"
+  (onSelectData)="onSelectOrder($event)"
+>
+  <ng-template #rowTemplate let-order let-rowIndex="rowIndex">
+    <td>{{ order?.code }}</td>
+    <td>{{ order?.invoice?.code || '-' }}</td>
+    <td>{{ order?.customer?.name }}</td>
+    <td>{{ order.created_at | date:'short' }}</td>
+    <td>
+      <p-badge [value]="generateStatus(order?.status)" [severity]="generateSeverity(order?.status)"></p-badge>
+    </td>
+    <td>{{ order?.sales?.name }}</td>
+    <td>
+      <p-button (click)="openDetailModal(order)" icon="pi pi-eye"></p-button>
+    </td>
+  </ng-template>
+</app-generic-table>
+
+<app-order-detail-modal #orderDetailModal/>

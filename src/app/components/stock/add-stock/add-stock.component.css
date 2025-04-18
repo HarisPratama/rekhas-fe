@@ -1,0 +1,40 @@
+.form-container {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.button-group button.active {
+  border: 2px solid #ccc;
+  font-weight: bold;
+}
+
+.form-field {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+input, .p-dropdown {
+  width: 100%;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}

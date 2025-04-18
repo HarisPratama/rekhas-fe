@@ -1,0 +1,16 @@
+@if (isOnRootRoute()) {
+  <div class="grid-container">
+    @for (product of products; track product.route) {
+      <div class="card" (click)="goTo(product.route)">
+        <div class="card-image" [style.backgroundImage]="'url(' + product.image + ')'">
+          <div class="card-overlay">
+            <h2>{{ product.title }} <span class="arrow">➜</span></h2>
+            <p>{{ product.description }}</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<router-outlet></router-outlet>

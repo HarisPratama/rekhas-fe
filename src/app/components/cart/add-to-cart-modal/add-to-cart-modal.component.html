@@ -1,0 +1,27 @@
+<p-dialog [(visible)]="visible" [modal]="true" [closable]="false" [style]="{width: '400px'}"
+          [contentStyle]="{padding: '0'}" [baseZIndex]="10000"
+          [showHeader]="false" [dismissableMask]="true" [breakpoints]="{'640px': '90vw'}">
+
+  <div class="p-4 border-b flex items-center gap-2 text-green-600 font-medium">
+    <i class="pi pi-check-circle text-xl"></i>
+    <span>Added To Cart</span>
+  </div>
+
+  <div class="p-4">
+    <div class="flex gap-4">
+      <img [src]="product?.full_image_url" class="w-20 h-20 object-cover rounded-md border" alt="Product" />
+      <div class="flex flex-col justify-between">
+        <div>
+          <div class="font-semibold">{{ product?.name }}</div>
+          <div class="text-sm text-gray-500">Size - {{ product?.size || '-' }}</div>
+        </div>
+        <div class="text-black font-medium mt-2">Rp {{ product?.price | number:'1.0-0' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4 pt-0 flex justify-between gap-2">
+    <p-button label="View Cart" severity="secondary" class="w-full" styleClass="w-full" (click)="viewCart()"></p-button>
+    <p-button label="Checkout" severity="contrast" class="w-full" styleClass="w-full" (click)="checkout()"></p-button>
+  </div>
+</p-dialog>

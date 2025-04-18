@@ -1,0 +1,49 @@
+<h2>📦 Stock</h2>
+<p-toast />
+<div class="stock-tabs">
+  @for (tab of stockTabs; track tab.value) {
+    <button [class.active]="activeTab === tab.value" class="tab" (click)="getStocksByType(tab.value)">{{tab.label}}</button>
+  }
+</div>
+
+<input type="text" placeholder="Search products name, product code, etc." class="search-bar" />
+
+<div class="action-buttons">
+  <p-button icon="pi pi-download" label="Download" severity="contrast" />
+  <p-button (click)="openAddStockModal()" icon="pi pi-plus" label="Add Stock" severity="contrast" />
+
+  @if (selectedStocks.length > 0) {
+    <p-button (click)="openDeliverModal()" icon="pi pi-truck" label="Deliver" severity="contrast" />
+    <p-button icon="pi pi-trash" label="Delete" severity="danger" />
+  }
+</div>
+
+<!-- Table goes here -->
+<app-generic-table
+  [data]="virtualStocks"
+  [cols]="cols"
+  [first]="first"
+  [rows]="rows"
+  [totalRecords]="totalRecords"
+  [loading]="loading"
+  (lazyLoad)="onLazyLoad($event)"
+  (pageChange)="onPageChange($event)"
+  (onSelectData)="onSelectStock($event)"
+>
+  <ng-template #rowTemplate let-stock let-rowIndex="rowIndex">
+      <td>{{ stock.product.name }}</td>
+      <td>{{ stock.product.code }}</td>
+      <td>{{ stock.product.fabric }}</td>
+      <td>{{ stock.quantity }}</td>
+      <td>{{ stock.product.description || '-' }}</td>
+      <td>{{ stock.product.price | currency:'IDR' }}</td>
+      <td>{{ stock.product.created_at | date:'short' }}</td>
+      <td>{{ stock.checkpoint.name }}</td>
+      <td>
+        <img [src]="stock.product.full_image_url || 'https://placehold.co/40'" width="40" alt="Product Image" />
+      </td>
+  </ng-template>
+</app-generic-table>
+
+<app-add-stock #addStockModal></app-add-stock>
+<app-create-delivery-modal #deiverModal></app-create-delivery-modal>

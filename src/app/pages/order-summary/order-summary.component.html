@@ -1,0 +1,189 @@
+<p-toast></p-toast>
+<div class="px-10 md:px-30 py-10 bg-gray-100">
+  <!-- Back Button -->
+  @if (preview) {
+    <div class="flex items-center gap-2 text-sm text-black font-medium cursor-pointer mb-4" (click)="continueAction()">
+      <i class="pi pi-arrow-left"></i>
+      <span>Back to Order Summary</span>
+    </div>
+  } @else {
+    <div class="flex items-center gap-2 text-sm text-black font-medium cursor-pointer mb-4" (click)="backToCart()">
+      <i class="pi pi-arrow-left"></i>
+      <span>Back to Cart</span>
+    </div>
+  }
+
+  <!-- Order Summary Title -->
+  <h2 class="text-3xl font-bold mb-6">Order Summary</h2>
+
+  <!-- Customer Details Card -->
+  <p-card class="mb-6 shadow-md" header="Customer Details">
+
+    <div class="space-y-3 text-sm">
+      <div><span class="text-gray-500">Customer Name</span><br /><span class="font-semibold">{{cart?.customer?.name}}</span></div>
+      <div><span class="text-gray-500">Customer Address</span><br /><span class="font-semibold">{{cart?.customer?.address}}</span></div>
+      <div><span class="text-gray-500">Customer WhatsApp</span><br /><span class="font-semibold">{{cart?.customer?.phone}}</span></div>
+      <div><span class="text-gray-500">Customer Email</span><br /><span class="font-semibold">{{cart?.customer?.email}}</span></div>
+    </div>
+  </p-card>
+
+  <!-- Items Section -->
+  <p-card styleClass="mt-10" header="Items">
+
+    <!-- Item Card -->
+    @for (item of cart?.items; track item.id) {
+      <div class="flex items-start justify-between bg-gray-100 p-4 rounded-lg shadow-sm">
+        <div class="flex gap-4">
+          @if (item.product.full_image_url) {
+            <img [src]="item.product.full_image_url" alt="Item Image" class="w-20 h-20 object-cover rounded" />
+          }
+          <div class="space-y-1 text-sm">
+            <span class="bg-black text-white text-xs px-2 py-1 rounded">{{item.product.type}}</span>
+            <div class="font-semibold text-base">{{item.product.fabric}}</div>
+            <div class="text-gray-500">{{item.product.code}}</div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-sm font-semibold">{{item.quantity}}x</div>
+          <div class="text-sm font-semibold">{{item.product.price | currency: 'Rp'}} /pcs </div>
+        </div>
+      </div>
+
+      <p-panel toggleable="true" [collapsed]="true" header="Size Name: SIZE {{item.customerMeasurement.code}}" styleClass="text-sm">
+        <!-- Optional measurement detail here -->
+        <div class="flex flex-wrap gap-3">
+          @for (size of getMeasurementKeys(item.customerMeasurement); track i; let i = $index) {
+            <p-card>
+              <p>{{size}}</p>
+              <p>{{ getCustomerMeasurementValue(item.customerMeasurement, size) }} cm</p>
+            </p-card>
+          }
+        </div>
+
+        <div class="grid grid-cols-3 gap-4">
+          @for (image of item.customerMeasurement.images; track image.id) {
+            <div class="relative border rounded-lg h-40 flex items-center justify-center bg-white">
+              <img [src]="image.full_image_url" class="object-cover w-full h-full rounded-lg" />
+            </div>
+          }
+        </div>
+      </p-panel>
+
+      <p-divider/>
+    }
+  </p-card>
+
+  <p-card styleClass="mt-10" header="Invoice ID">
+    @if (preview) {
+      <p>{{selectedInvoice.value ?? '-'}}</p>
+    } @else {
+      <p-select [options]="invoices" [formControl]="selectedInvoice" styleClass="mt-4" placeholder="Select Invoice" [editable]="true" optionValue="id" optionLabel="Invoice ID" class="w-full md:w-56" />
+    }
+  </p-card>
+
+  <p-card styleClass="mt-10" header="Due Date">
+    @if (preview) {
+      <p>{{dueDate.value ?? '-'}}</p>
+    } @else {
+      <p-date-picker dateFormat="dd/mm/yy" [formControl]="dueDate" styleClass="w-full mt-4" placeholder="DD/MM/YYYY"/>
+    }
+  </p-card>
+
+  <p-card styleClass="mt-10" header="Order Category">
+    @if (preview) {
+      <p>{{orderCategory.value ?? '-'}}</p>
+    } @else {
+      <div class="flex items-center mt-4">
+        <p-radiobutton name="order_category" value="normal" [formControl]="orderCategory" inputId="category1" />
+        <label for="category1" class="ml-2">Normal</label>
+      </div>
+      <div class="flex items-center mt-4">
+        <p-radiobutton name="order_category" value="priority" [formControl]="orderCategory" inputId="category2" />
+        <label for="category2" class="ml-2">Priority</label>
+      </div>
+      <div class="flex items-center mt-4">
+        <p-radiobutton name="order_category" value="super_priority" [formControl]="orderCategory" inputId="category3" />
+        <label for="category3" class="ml-2">Super Priority</label>
+      </div>
+    }
+  </p-card>
+
+  <p-card styleClass="mt-10" header="Price detail">
+    @for (item of cart?.items; track item.id) {
+      <div class="flex justify-between items-center">
+        <p>{{item.product.type}} - {{item.product.fabric}}</p>
+        <p>{{+item.product.price * item.quantity | currency:'IDR':'symbol':'0.0-0':'id-ID'}}</p>
+      </div>
+    }
+    <p-divider></p-divider>
+    <div class="flex justify-between items-center">
+      <p>Total</p>
+      <p>{{getTotalPrice() | currency:'IDR':'symbol':'0.0-0':'id-ID'}}</p>
+    </div>
+  </p-card>
+
+  <p-card styleClass="mt-10" header="Payment Method">
+    <h1>Type</h1>
+    @if (preview) {
+      <p>{{paymentType.value ?? '-'}}</p>
+    } @else {
+      <div class="flex items-center mt-4">
+        <p-radiobutton name="paymentType" value="partly_payment" [formControl]="paymentType" inputId="paymentType1" />
+        <label for="paymentType1" class="ml-2">Partly Payment</label>
+      </div>
+      <div class="flex items-center mt-4">
+        <p-radiobutton name="paymentType" value="full_payment" [formControl]="paymentType" inputId="paymentType2" />
+        <label for="paymentType2" class="ml-2">Full Payment</label>
+      </div>
+    }
+
+    <p-divider></p-divider>
+
+    <h1>Method</h1>
+    @if (preview) {
+      <p>{{paymentMethod.value ?? '-'}}</p>
+    } @else {
+      <div class="flex items-center mt-4">
+        <p-radiobutton name="paymentMethod" value="cash" [formControl]="paymentMethod" inputId="paymentMethod1" />
+        <label for="paymentMethod1" class="ml-2">Cash</label>
+      </div>
+      <div class="flex items-center mt-4">
+        <p-radiobutton name="paymentMethod" value="transfer" [formControl]="paymentMethod" inputId="paymentMethod2" />
+        <label for="paymentMethod2" class="ml-2">Transfer</label>
+      </div>
+      <div class="flex items-center mt-4">
+        <p-radiobutton name="paymentMethod" value="debit_card" [formControl]="paymentMethod" inputId="paymentMethod3" />
+        <label for="paymentMethod3" class="ml-2">Debit Card</label>
+      </div>
+      <div class="flex items-center mt-4">
+        <p-radiobutton name="paymentMethod" value="e_wallet" [formControl]="paymentMethod" inputId="paymentMethod4" />
+        <label for="paymentMethod4" class="ml-2">eWallet</label>
+      </div>
+    }
+  </p-card>
+
+  @if (paymentMethod.value === 'transfer') {
+    <p-card styleClass="mt-10" header="Bank Name">
+      @if (preview) {
+        <p>{{bankName || '-'}}</p>
+      } @else {
+        <input type="text" class="w-full" pInputText placeholder="Bank Name" [(ngModel)]="bankName" />
+      }
+    </p-card>
+    <p-card styleClass="mt-10" header="Account Number">
+      @if (preview) {
+        <p>{{accountNumber || '-'}}</p>
+      } @else {
+        <input type="text" class="w-full" pInputText placeholder="Account Number" [(ngModel)]="accountNumber" />
+      }
+    </p-card>
+  }
+
+  <p-divider></p-divider>
+
+  @if (preview) {
+    <p-button [disabled]="isDisabledBtn() || loading" [loading]="loading" (click)="submitAction()" label="Proceed to Order" severity="contrast" styleClass="w-full"/>
+  } @else {
+    <p-button [disabled]="isDisabledBtn()" (click)="continueAction()" label="Continue" severity="contrast" styleClass="w-full"/>
+  }
+</div>

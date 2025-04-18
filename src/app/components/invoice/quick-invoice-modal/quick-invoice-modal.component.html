@@ -1,0 +1,57 @@
+<p-toast/>
+<p-dialog
+  [(visible)]="display"
+  [modal]="true"
+  [closable]="true"
+  [style]="{width: '500px'}"
+  header="Generate Invoice"
+  [baseZIndex]="10000">
+
+  <div class="flex flex-col gap-4">
+    <!-- Customer Select -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Customer</label>
+      <p-autocomplete styleClass="w-full" [(ngModel)]="selectedCustomer" [suggestions]="customers" [dropdown]="true" field="name" (completeMethod)="searchCustomer($event)" />
+      @if(selectedCustomer?.id) {
+        <p>{{selectedCustomer.name}} dengan email {{selectedCustomer?.email}}</p>
+      }
+    </div>
+
+    <div class="text-center text-sm text-gray-500">— OR —</div>
+
+    <!-- Add New Customer -->
+    <p-button type="button" label="Add New Customer" icon="pi pi-plus"
+            styleClass="w-full p-button-outlined" (click)="onAddNewCustomer()">
+    </p-button>
+
+    <!-- Category (Fabric) -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Category</label>
+      <p-select [options]="categories" [(ngModel)]="selectedCategory" [showClear]="true" (onChange)="onSelectCategory($event)" optionLabel="name" placeholder="Select fabric" class="w-full" />
+    </div>
+
+    <!-- Product -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Product</label>
+      <p-autocomplete styleClass="w-full" [(ngModel)]="selectedProduct" [suggestions]="products" [dropdown]="true" field="code" (completeMethod)="searchProduct($event)" />
+    </div>
+
+    <!-- Notes -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Notes</label>
+      <textarea pTextarea [(ngModel)]="notes" rows="3" class="w-full"></textarea>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cancel" class="p-button-text" (click)="display = false"></button>
+    <button
+      pButton
+      type="button"
+      label="Generate Invoice"
+      [disabled]="!selectedCustomer?.id || !selectedProduct?.id"
+      (click)="generateInvoice()">
+    </button>
+  </ng-template>
+</p-dialog>

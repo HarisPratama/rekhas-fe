@@ -1,0 +1,52 @@
+<div class="p-2">
+  <div class="flex justify-between items-center mb-4">
+    <div class="text-3xl font-bold flex items-center gap-2">
+      <i class="pi pi-download text-2xl"></i>
+      Invoice
+    </div>
+    <div class="flex gap-2">
+      <p-button icon="pi pi-filter" class="p-button-outlined p-button-secondary" label="Filter"></p-button>
+    </div>
+  </div>
+
+  <div class="flex justify-between items-center mb-4">
+    <input
+      type="text"
+      pInputText
+      placeholder="Search orders"
+      class="w-full max-w-md p-inputtext-sm"
+      [(ngModel)]="search"
+    />
+    <div class="flex gap-2">
+      <p-button icon="pi pi-download" label="Download" class="p-button-outlined"></p-button>
+      <p-button icon="pi pi-plus" (click)="showModal()" label="Quick Invoice" class="p-button-black"></p-button>
+    </div>
+  </div>
+
+  <app-generic-table
+    [data]="virtualInvoices"
+    [cols]="cols"
+    [first]="first"
+    [rows]="rows"
+    [totalRecords]="invoiceService.pagination.total"
+    [loading]="loading"
+    (lazyLoad)="onLazyLoad($event)"
+    (pageChange)="onPageChange($event)"
+    (onSelectData)="onSelectInvoice($event)"
+  >
+    <ng-template #rowTemplate let-invoice let-rowIndex="rowIndex">
+      <td>{{ invoice.created_at | date:'short' }}</td>
+      <td>{{ invoice?.code }}</td>
+      <td>{{ invoice?.customer?.name }}</td>
+      <td>{{ invoice?.customer?.address }}</td>
+      <td class="text-sm">{{ getProductTypes(invoice) }}</td>
+      <td>{{ getProductFabrics(invoice) }}</td>
+      <td>{{ getCheckpointNames(invoice) }}</td>
+      <td>{{ invoice?.total_amount | currency:'IDR':'symbol':'0.0-0':'id-ID' }}</td>
+      <td>{{invoice?.status}}</td>
+      <td>{{invoice?.order?.payment_method || '-'}}</td>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<app-quick-invoice-modal #quickInvoiceModalComponent/>

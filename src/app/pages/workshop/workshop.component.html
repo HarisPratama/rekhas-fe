@@ -1,0 +1,38 @@
+<h2>🧾 Workshop</h2>
+
+<input type="text" placeholder="Search orders" class="mt-10 search-bar" />
+
+<div class="flex gap-2">
+  <p-button severity="contrast">Filter</p-button>
+  <p-button severity="contrast">Download</p-button>
+</div>
+
+<!-- Order Table -->
+<app-generic-table
+  [data]="virtualWorkshops"
+  [cols]="cols"
+  [first]="first"
+  [rows]="rows"
+  [totalRecords]="workshopService.pagination.total"
+  [loading]="loading"
+  (lazyLoad)="onLazyLoad($event)"
+  (pageChange)="onPageChange($event)"
+  (onSelectData)="onSelectWorkshop($event)"
+>
+  <ng-template #rowTemplate let-workshop let-rowIndex="rowIndex">
+    <td>{{ rowIndex + 1 }}</td>
+    <td>{{ workshop?.type }}</td>
+    <td>{{ workshop?.notes }}</td>
+    <td><img [src]="workshop?.orderItem?.product?.full_image_url" alt="" width="50px"></td>
+    <td>
+      <p-badge [severity]="generateSeverity(workshop?.status)" [value]="generateStatus(workshop?.status)"/>
+    </td>
+    <td>{{ workshop?.order?.customer?.name }}</td>
+    <td>{{ workshop?.order?.code }}</td>
+    <td>
+      <p-button (click)="openDetailModal(workshop)" icon="pi pi-eye"></p-button>
+    </td>
+  </ng-template>
+</app-generic-table>
+
+<app-workshop-detail-modal #workshopDetailModal/>

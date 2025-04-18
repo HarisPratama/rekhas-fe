@@ -1,0 +1,26 @@
+<div class="header">
+  <button class="back-btn" (click)="goBack()">← Back to Products</button>
+  <h2>Listing <span class="count">(5503)</span></h2>
+</div>
+
+<div class="toolbar">
+  <input type="text" placeholder="Search by product code" class="search-bar" />
+  <div class="actions">
+    <button>Filter</button>
+    <button>Sort By</button>
+  </div>
+</div>
+
+<div class="product-grid">
+  @for (item of products; track item.id) {
+    <div (click)="goToDetail(item.id)" class="product-card">
+      <img [src]="item.full_image_url" alt="product image" />
+      <div class="info">
+        <strong>{{ item.fabric }}</strong>
+        <p class="desc">{{ item.code }}</p>
+        <p class="price">Rp {{ item.price | number:'1.0-0' }}</p>
+        <p class="stock">🧵 {{ item.quantity }}</p>
+      </div>
+    </div>
+  }
+</div>

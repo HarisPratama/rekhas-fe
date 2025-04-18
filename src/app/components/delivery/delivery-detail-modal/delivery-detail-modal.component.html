@@ -1,0 +1,126 @@
+<p-dialog
+  header="🚚 Delivery"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [closable]="true"
+  (onHide)="onClose()"
+  position="bottomright"
+>
+  <p-toast/>
+  <!-- Deliver To + Status -->
+  <div class="delivery-header">
+    <label>Deliver to {{delivery?.to_checkpoint?.name}}</label>
+    <p-chip icon="pi pi-circle-on" [label]="delivery?.status" />
+  </div>
+
+  <p-divider/>
+
+  <!-- Deliver Id -->
+  <div class="section">
+    <div class="section-header">
+      <label>Deliver ID</label>
+      <span>{{delivery?.code}}</span>
+    </div>
+  </div>
+
+  <p-divider/>
+
+  <!-- Deliver Schedule -->
+  <div class="section">
+    <div class="section-header">
+      <label>Schedule</label>
+      @if (delivery && delivery?.scheduled_at) {
+        <p-button icon="pi pi-calendar" severity="contrast" [label]="scheduledAtFormatted"></p-button>
+      }
+    </div>
+  </div>
+
+  <p-divider/>
+
+
+  <!-- Deliver Items -->
+  <div class="section">
+    <div class="section-header">
+      <label>Items</label>
+    </div>
+    <p-dataview #dv [value]="detailDelivery?.items">
+      <ng-template #list let-items>
+        <div class="grid grid-cols-12 gap-4 grid-nogutter">
+          <div class="col-span-12" *ngFor="let item of items; let first = first">
+            <div
+              class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
+              [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }"
+            >
+              <div class="md:w-40 relative">
+                <img
+                  class="block xl:block mx-auto rounded-border w-full"
+                  [src]="item?.product?.full_image_url"
+                  [alt]="item?.product?.name"
+                />
+                <p-tag
+                  [value]="item?.product?.status || 'On Process'"
+                  [severity]="getSeverity(item.product)"
+                  class="absolute"
+                  styleClass="dark:!bg-surface-900"
+                  [style.left.px]="4"
+                  [style.top.px]="4"
+                />
+              </div>
+              <div class="flex flex-col justify-between md:items-center flex-1 gap-6">
+                <div class="flex flex-row md:flex-col justify-between items-start gap-2">
+                  <div>
+                    <span class="font-medium text-secondary text-sm">{{ item?.product?.type }} - {{ item?.product?.code }}</span>
+                    <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item?.product?.fabric }}</div>
+                  </div>
+                </div>
+                <div class="flex flex-col md:items-end gap-8">
+                    <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{
+                        (item?.product?.price | currency:'IDR':'symbol':'0.0-0':'id-ID') + '/pcs'
+                      }}</span>
+                    <span>{{item.quantity_delivered}}x</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </p-dataview>
+  </div>
+
+  <p-divider/>
+
+
+  <!-- Proof of Delivery -->
+  <div class="section">
+    <div class="section-header">
+      <label>Proof Of Delivery</label>
+      @if (detailDelivery?.status === 'scheduled') {
+        <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload"  accept="image/*" maxFileSize="1000000" (onSelect)="onBasicUploadAuto($event)" [auto]="false" [multiple]="false" chooseLabel="Upload Delivery Photo" />
+      }
+
+    </div>
+    <div class="image-placeholder">
+      @if (detailDelivery?.full_image_url) {
+        <img [src]="detailDelivery.full_image_url" alt="Proof of Delivery" />
+      } @else {
+        @if (proveImageUrl) {
+          <p>hallo</p>
+          <img [src]="proveImageUrl" alt="Proof of Delivery" />
+        } @else {
+          <div class="placeholder-box">
+            <i class="pi pi-image"></i>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <p-divider/>
+
+  <!-- Delivery Letter -->
+  <div class="section">
+    <label>Delivery Letter</label>
+    <button class="generate-button" (click)="generateLetter()">Generate Letter</button>
+  </div>
+</p-dialog>

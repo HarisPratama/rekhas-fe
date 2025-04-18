@@ -1,0 +1,186 @@
+<p-dialog
+  header="🚚 Workshop Detail"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [closable]="true"
+  (onHide)="onClose()"
+  position="bottomright"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [maximizable]="true"
+>
+  <p-toast/>
+  <!-- Deliver To + Status -->
+  <p-card>
+    <div class="flex gap-4">
+      <img [src]="getImageType(workshop?.type)" width="50px" alt="">
+      <div class="flex-1">
+        <div class="flex justify-between">
+          <p-badge severity="secondary" [value]="getType(workshop?.type)"></p-badge>
+          <p-badge [severity]="getSeverity(workshop?.status)" [value]="workshop?.status" />
+        </div>
+        <p>{{workshop?.orderItem?.product?.type}}: {{workshop?.orderItem?.product?.code}}</p>
+      </div>
+    </div>
+  </p-card>
+
+  <p-divider/>
+
+  <!-- Deliver Items -->
+  <div class="section">
+    <div class="section-header">
+      <label>Item Detail</label>
+    </div>
+    <p-dataview #dv [value]="item">
+      <ng-template #list let-item>
+        <div class="flex flex-col gap-2 mt-4">
+          <div class="flex gap-4">
+            <img [src]="getImageType(workshop?.type)" width="50px" alt="">
+            <p-badge severity="secondary" [value]="getType(workshop?.type)"></p-badge>
+          </div>
+          <div class="flex gap-4">
+            <img
+              class="rounded-border"
+              [src]="item?.full_image_url"
+              [alt]="item?.name"
+              width="50px"
+            />
+            <div>
+              <p>Primary Fabric: {{item.type}} - {{item?.code}}</p>
+              <p class="text-sm">{{item.fabric}}</p>
+              <p class="text-sm">{{detailWorkshop?.orderItem?.quantity}} x</p>
+            </div>
+          </div>
+
+          @if (detailWorkshop?.customerMeasurement) {
+            <p-panel toggleable="true" [collapsed]="true" header="Size Name: SIZE {{detailWorkshop?.customerMeasurement?.code}}" styleClass="text-sm">
+              <!-- Optional measurement detail here -->
+              <div class="flex flex-wrap gap-3">
+                @for (size of getMeasurementKeys(detailWorkshop?.customerMeasurement); track i; let i = $index) {
+                  <p-chip label="{{size}}: {{getCustomerMeasurementValue(detailWorkshop?.customerMeasurement, size)}} cm"/>
+                }
+              </div>
+            </p-panel>
+          }
+
+        </div>
+      </ng-template>
+    </p-dataview>
+  </div>
+
+  <p-divider/>
+
+  <!-- Customer Name -->
+  <div class="section">
+    <div class="section-header">
+      <label>Customer Name</label><br>
+      <span>{{workshop?.order?.customer?.name}}</span>
+    </div>
+  </div>
+
+  <p-divider/>
+
+  <!--  Customer Phone-->
+  <div class="section">
+    <div class="section-header">
+      <label>Customer Phone Number</label><br>
+      <span>{{workshop?.order?.customer?.phone}}</span>
+    </div>
+  </div>
+
+  <p-divider/>
+
+  <!--  Customer Address-->
+  <div class="section">
+    <div class="section-header">
+      <label>Address</label><br>
+      <span>{{workshop?.order?.customer?.address}}</span>
+    </div>
+  </div>
+
+  <p-divider/>
+
+  <!-- Order Date -->
+  <div class="section">
+    <div class="section-header">
+      <label>Order ID</label><br>
+      <span>{{workshop?.order?.code}}</span>
+    </div>
+  </div>
+
+  <p-divider/>
+
+  @if (detailWorkshop && detailWorkshop.status === 'on_request') {
+    <p-button [loading]="loading" (click)="updateStatus('on_process')" styleClass="w-full" severity="contrast" label="Update status to on process"></p-button>
+    <p-divider/>
+  } @else if (detailWorkshop && detailWorkshop.status === 'on_process') {
+    <div class="flex flex-col gap-4">
+      <h3 class="text-lg">Assign Master dan Tukang</h3>
+      <div>
+        <label>Master</label>
+        <p-autocomplete styleClass="w-full" [(ngModel)]="selectedMaster" [suggestions]="tailors" [dropdown]="true" field="name" (completeMethod)="searchMaster($event)" />
+      </div>
+      <div>
+        <label>Tukang</label>
+        <p-autocomplete styleClass="w-full" [(ngModel)]="selectedWorker" [suggestions]="workers" [dropdown]="true" field="name" (completeMethod)="searchWorker($event)" />
+      </div>
+    </div>
+    <p-divider/>
+    <p-button [loading]="loading" [disabled]="!this.selectedMaster?.id || !this.selectedWorker?.id" (click)="updateStatus('ready')" styleClass="w-full" severity="contrast" label="Update status to ready"></p-button>
+    <p-divider/>
+  } @else if (detailWorkshop && detailWorkshop.status === 'ready') {
+    <p-inplace>
+      <ng-template #display>
+        <span><i class="pi pi-calendar-plus"> Set Schedule Delivery</i> </span>
+      </ng-template>
+      <ng-template #content>
+        <div class="m-0 flex flex-col gap-4">
+          <h3 class="text-lg">Schedule Delivery</h3>
+          <div>
+            <p>Address</p>
+            <p-inplace>
+              <ng-template #display>
+                <div class="flex gap-4">
+                  <span>{{addressDelivery || detailWorkshop?.order?.customer?.address}}</span>
+                  <i class="pi pi-pencil"></i>
+                </div>
+              </ng-template>
+              <ng-template #content let-closeCallback="closeCallback">
+                <span class="inline-flex items-center gap-2">
+                    <input pInputText type="text" placeholder="input address" [(ngModel)]="addressDelivery" autofocus />
+                    <p-button (click)="closeCallback($event)" icon="pi pi-times" text severity="danger"></p-button>
+                </span>
+              </ng-template>
+            </p-inplace>
+          </div>
+          <div>
+            <label>Select Driver</label>
+            <p-autocomplete styleClass="w-full" [(ngModel)]="selectedCourier" [suggestions]="couriers" [dropdown]="true" field="name" (completeMethod)="searchCourier($event)" />
+          </div>
+          <div>
+            <label>Delivery Date</label><br>
+            <p-datepicker styleClass="w-full" [minDate]="minDate" dateFormat="dd/mm/yy" [(ngModel)]="scheduleDate" />
+          </div>
+          <div>
+            <p-checkbox [(ngModel)]="isPriority" inputId="ny" [binary]="true"  />
+            <label for="ny" class="ml-2">Set as Priority</label>
+          </div>
+          <div>
+            <label>Note to Driver</label>
+            <textarea rows="5" class="w-full" pTextarea [(ngModel)]="note"></textarea>
+          </div>
+        </div>
+        <p-divider/>
+        <p-button [loading]="loading" [disabled]="!selectedCourier?.id || !scheduleDate" (click)="updateStatus('completed')" styleClass="w-full" severity="contrast" label="Submit Schedule"></p-button>
+      </ng-template>
+    </p-inplace>
+    <p-divider/>
+  }
+
+
+
+  <div class="flex gap-2">
+    <p-button class="w-full" styleClass="w-full" label="Hold Order" severity="warn" variant="outlined" (click)="visible = false" />
+    <p-button class="w-full" styleClass="w-full" label="Cancel Order" severity="danger" variant="outlined" (click)="visible = false" />
+  </div>
+</p-dialog>

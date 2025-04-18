@@ -1,0 +1,296 @@
+<p-dialog
+  header="Add Stock"
+  [(visible)]="showModal"
+  [modal]="true"
+  [style]="{width: '500px'}"
+  [closable]="true"
+  (onHide)="close()">
+  <p-toast/>
+  <div class="form-container">
+<!--    <div class="header">-->
+<!--    </div>-->
+
+    <p-tabs value="1">
+      <p-tablist>
+        <p-tab value="0">Upload</p-tab>
+        <p-tab value="1">Manual</p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel value="0">
+          <app-upload-drag-drop></app-upload-drag-drop>
+        </p-tabpanel>
+        <p-tabpanel value="1">
+          <form [formGroup]="stockForm" (ngSubmit)="submitForm()">
+            <div class="form-field">
+              <label for="name">Product Name</label>
+              <input pInputText id="name" formControlName="name" placeholder="Product Name" />
+            </div>
+
+            <div class="form-field">
+              <label for="code">Product Code</label>
+              <input pInputText id="code" formControlName="code" placeholder="Product Code" />
+            </div>
+
+            <div class="form-field">
+              <label for="fabric">Fabric Code</label>
+              <input pInputText id="fabric" formControlName="fabric" placeholder="Fabric Code" />
+            </div>
+
+            <div class="form-field">
+              <label>Type</label>
+              <p-select formControlName="type" [options]="types" optionLabel="name" optionValue="code" placeholder="Select a Type" class="w-full md:w-56" />
+            </div>
+
+            <div class="form-field">
+              <label for="quantity">Quantity</label>
+              <input type="number" pInputText id="quantity" formControlName="quantity" placeholder="Quantity" />
+            </div>
+            <div class="form-field">
+              <label for="desc">Description</label>
+              <textarea class="w-full" rows="5" id="desc" pTextarea pSize="large" cols="30" formControlName="description"></textarea>
+            </div>
+            <div class="form-field">
+              <label>Price</label>
+              <p-inputnumber class="w-full" inputId="currency-id" formControlName="price" mode="currency" currency="IDR" locale="id-ID" [showButtons]="true" />
+            </div>
+            <div class="form-field">
+              <label>Main Fabric Image</label>
+              <app-upload-drag-drop (selectedFile)="onSelectMainImage($event)"></app-upload-drag-drop>
+            </div>
+            <div class="form-field">
+              <div class="space-y-6">
+                <!-- Category: Trouser -->
+                <div>
+                  <div class="flex items-center gap-2 mb-4">
+                    <img src="assets/images/trouser-ss.png" alt="Trouser" class="w-5 h-5" height="204" width="202"/>
+                    <h3 class="text-lg font-medium">Trouser</h3>
+                  </div>
+                  <div class="grid grid-cols-3 gap-4">
+                    <!-- Trouser Front -->
+                    <div class="flex flex-col items-center justify-center border border-gray-300 rounded-xl py-6 px-4 cursor-pointer hover:bg-gray-50">
+                      @if (selectedImages['trouser-front']) {
+                        <div class="relative w-full h-full">
+                          <img
+                            [src]="getImagePreview('trouser-front')"
+                            alt="Preview"
+                            class="w-full h-full object-contain border rounded"
+                          />
+                          <p-button (onClick)="removeSelectedImage('trouser-front')" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" size="small" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" />
+                        </div>
+                        <div class="label mt-2">Front</div>
+                      } @else {
+                        <div class="text-3xl">
+                          <p-fileupload
+                            mode="basic"
+                            name="demo[]"
+                            chooseIcon="pi pi-upload"
+                            url="https://www.primefaces.org/cdn/api/upload.php"
+                            accept="image/*"
+                            maxFileSize="1000000"
+                            (onSelect)="onSelectedFiles($event, 'trouser-front')"
+                            [auto]="true"
+                            chooseLabel="+"
+                          />
+                        </div>
+                        <div class="label">Front</div>
+                      }
+                    </div>
+
+                    <!-- Trouser Back -->
+                    <div class="flex flex-col items-center justify-center border border-gray-300 rounded-xl py-6 px-4 cursor-pointer hover:bg-gray-50">
+                      @if (selectedImages['trouser-back']) {
+                        <div class="relative w-full h-full">
+                          <img
+                            [src]="getImagePreview('trouser-back')"
+                            alt="Preview"
+                            class="w-full h-full object-contain border rounded"
+                          />
+                          <p-button (onClick)="removeSelectedImage('trouser-back')" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" size="small" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" />
+                        </div>
+                        <div class="label mt-2">Back</div>
+                      } @else {
+                        <div class="text-3xl">
+                          <p-fileupload
+                            mode="basic"
+                            name="demo[]"
+                            chooseIcon="pi pi-upload"
+                            url="https://www.primefaces.org/cdn/api/upload.php"
+                            accept="image/*"
+                            maxFileSize="1000000"
+                            (onSelect)="onSelectedFiles($event, 'trouser-back')"
+                            [auto]="true"
+                            chooseLabel="+"
+                          />
+                        </div>
+                        <div class="label">Back</div>
+                      }
+                    </div>
+
+                    <!-- Trouser Side -->
+                    <div class="flex flex-col items-center justify-center border border-gray-300 rounded-xl py-6 px-4 cursor-pointer hover:bg-gray-50">
+                      @if (selectedImages['trouser-side']) {
+                        <div class="relative w-full h-full">
+                          <img
+                            [src]="getImagePreview('trouser-side')"
+                            alt="Preview"
+                            class="w-full h-full object-contain border rounded"
+                          />
+                          <p-button (onClick)="removeSelectedImage('trouser-side')" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" size="small" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" />
+                        </div>
+                        <div class="label mt-2">Side</div>
+                      } @else {
+                        <div class="text-3xl">
+                          <p-fileupload
+                            mode="basic"
+                            name="demo[]"
+                            chooseIcon="pi pi-upload"
+                            url="https://www.primefaces.org/cdn/api/upload.php"
+                            accept="image/*"
+                            maxFileSize="1000000"
+                            (onSelect)="onSelectedFiles($event, 'trouser-side')"
+                            [auto]="true"
+                            chooseLabel="+"
+                          />
+                        </div>
+                        <div class="label">Side</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Category: Suit -->
+                <div>
+                  <div class="flex items-center gap-2 mb-4">
+                    <img src="/assets/images/suit-ss.png" alt="Suit" class="w-5 h-5" />
+                    <h3 class="text-lg font-medium">Suit</h3>
+                  </div>
+                  <div class="grid grid-cols-3 gap-4">
+                    <!-- Suit Front -->
+                    <div class="flex flex-col items-center justify-center border border-gray-300 rounded-xl py-6 px-4 cursor-pointer hover:bg-gray-50">
+                      @if (selectedImages['suit-front']) {
+                        <div class="relative w-full h-full">
+                          <img [src]="getImagePreview('suit-front')" alt="Preview" class="w-full h-full object-contain border rounded" />
+                          <p-button (onClick)="removeSelectedImage('suit-front')" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" size="small" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" />
+                        </div>
+                        <div class="label mt-2">Front</div>
+                      } @else {
+                        <div class="text-3xl">
+                          <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="https://www.primefaces.org/cdn/api/upload.php"
+                                        accept="image/*" maxFileSize="1000000" (onSelect)="onSelectedFiles($event, 'suit-front')" [auto]="true" chooseLabel="+" />
+                        </div>
+                        <div class="label">Front</div>
+                      }
+                    </div>
+
+                    <!-- Suit Back -->
+                    <div class="flex flex-col items-center justify-center border border-gray-300 rounded-xl py-6 px-4 cursor-pointer hover:bg-gray-50">
+                      @if (selectedImages['suit-back']) {
+                        <div class="relative w-full h-full">
+                          <img [src]="getImagePreview('suit-back')" alt="Preview" class="w-full h-full object-contain border rounded" />
+                          <p-button (onClick)="removeSelectedImage('suit-back')" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" size="small" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" />
+                        </div>
+                        <div class="label mt-2">Back</div>
+                      } @else {
+                        <div class="text-3xl">
+                          <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="https://www.primefaces.org/cdn/api/upload.php"
+                                        accept="image/*" maxFileSize="1000000" (onSelect)="onSelectedFiles($event, 'suit-back')" [auto]="true" chooseLabel="+" />
+                        </div>
+                        <div class="label">Back</div>
+                      }
+                    </div>
+
+                    <!-- Suit Side -->
+                    <div class="flex flex-col items-center justify-center border border-gray-300 rounded-xl py-6 px-4 cursor-pointer hover:bg-gray-50">
+                      @if (selectedImages['suit-side']) {
+                        <div class="relative w-full h-full">
+                          <img [src]="getImagePreview('suit-side')" alt="Preview" class="w-full h-full object-contain border rounded" />
+                          <p-button (onClick)="removeSelectedImage('suit-side')" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" size="small" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" />
+                        </div>
+                        <div class="label mt-2">Side</div>
+                      } @else {
+                        <div class="text-3xl">
+                          <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="https://www.primefaces.org/cdn/api/upload.php"
+                                        accept="image/*" maxFileSize="1000000" (onSelect)="onSelectedFiles($event, 'suit-side')" [auto]="true" chooseLabel="+" />
+                        </div>
+                        <div class="label">Side</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Category: Shirt -->
+                <div>
+                  <div class="flex items-center gap-2 mb-4">
+                    <img src="/assets/images/suit.png" alt="Shirt" class="w-5 h-5" />
+                    <h3 class="text-lg font-medium">Shirt</h3>
+                  </div>
+                  <div class="grid grid-cols-3 gap-4">
+                    <!-- Shirt Front -->
+                    <div class="flex flex-col items-center justify-center border border-gray-300 rounded-xl py-6 px-4 cursor-pointer hover:bg-gray-50">
+                      @if (selectedImages['shirt-front']) {
+                        <div class="relative w-full h-full">
+                          <img [src]="getImagePreview('shirt-front')" alt="Preview" class="w-full h-full object-contain border rounded" />
+                          <p-button (onClick)="removeSelectedImage('shirt-front')" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" size="small" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" />
+                        </div>
+                        <div class="label mt-2">Front</div>
+                      } @else {
+                        <div class="text-3xl">
+                          <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="https://www.primefaces.org/cdn/api/upload.php"
+                                        accept="image/*" maxFileSize="1000000" (onSelect)="onSelectedFiles($event, 'shirt-front')" [auto]="true" chooseLabel="+" />
+                        </div>
+                        <div class="label">Front</div>
+                      }
+                    </div>
+
+                    <!-- Shirt Back -->
+                    <div class="flex flex-col items-center justify-center border border-gray-300 rounded-xl py-6 px-4 cursor-pointer hover:bg-gray-50">
+                      @if (selectedImages['shirt-back']) {
+                        <div class="relative w-full h-full">
+                          <img [src]="getImagePreview('shirt-back')" alt="Preview" class="w-full h-full object-contain border rounded" />
+                          <p-button (onClick)="removeSelectedImage('shirt-back')" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" size="small" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" />
+                        </div>
+                        <div class="label mt-2">Back</div>
+                      } @else {
+                        <div class="text-3xl">
+                          <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="https://www.primefaces.org/cdn/api/upload.php"
+                                        accept="image/*" maxFileSize="1000000" (onSelect)="onSelectedFiles($event, 'shirt-back')" [auto]="true" chooseLabel="+" />
+                        </div>
+                        <div class="label">Back</div>
+                      }
+                    </div>
+
+                    <!-- Shirt Side -->
+                    <div class="flex flex-col items-center justify-center border border-gray-300 rounded-xl py-6 px-4 cursor-pointer hover:bg-gray-50">
+                      @if (selectedImages['shirt-side']) {
+                        <div class="relative w-full h-full">
+                          <img [src]="getImagePreview('shirt-side')" alt="Preview" class="w-full h-full object-contain border rounded" />
+                          <p-button (onClick)="removeSelectedImage('shirt-side')" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" size="small" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" />
+                        </div>
+                        <div class="label mt-2">Side</div>
+                      } @else {
+                        <div class="text-3xl">
+                          <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="https://www.primefaces.org/cdn/api/upload.php"
+                                        accept="image/*" maxFileSize="1000000" (onSelect)="onSelectedFiles($event, 'shirt-side')" [auto]="true" chooseLabel="+" />
+                        </div>
+                        <div class="label">Side</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="footer">
+              <button pButton type="button" label="Clear Form" class="p-button-secondary" (click)="clearForm()"></button>
+              <button pButton type="submit" label="Submit" [disabled]="stockForm.invalid || !mainImage?.name"></button>
+            </div>
+          </form>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+
+  </div>
+
+</p-dialog>

@@ -1,0 +1,120 @@
+/* stock.component.scss */
+
+:host {
+  display: block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100vh;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid #e5e7eb;
+  height: 64px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  /*color: #111827;*/
+}
+
+nav {
+  display: flex;
+  gap: 20px;
+}
+
+nav a {
+  text-decoration: none;
+  /*color: #6b7280;*/
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+nav a:hover {
+  /*color: #111827;*/
+}
+
+nav a.active {
+  /*color: #111827;*/
+  font-weight: 600;
+  border-bottom: 2px solid #111827;
+}
+
+.profile {
+  font-size: 14px;
+  /*color: #374151;*/
+}
+
+main {
+  padding: 24px;
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.dashboard-header h1 {
+  font-size: 28px;
+  font-weight: bold;
+  /*color: #111827;*/
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.nav-tab {
+  padding: 10px 20px;
+  border: 1px solid #d1d5db;
+  /*background-color: #fff;*/
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  /*color: #374151;*/
+  transition: background-color 0.2s;
+}
+
+.nav-tab:hover {
+  /*background-color: #f3f4f6;*/
+}
+
+.nav-tab.active {
+  /*background-color: #111827;*/
+  /*color: #fff;*/
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.dashboard-actions button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  /*background-color: #1f2937;*/
+  color: #fff;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.dashboard-actions button:hover {
+  /*background-color: #374151;*/
+}

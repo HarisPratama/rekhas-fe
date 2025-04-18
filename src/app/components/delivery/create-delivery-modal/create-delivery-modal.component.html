@@ -1,0 +1,128 @@
+<script src="../../../services/stock/stock.service.ts"></script>
+<script src="../../../pages/stock/stock.component.ts"></script>
+<p-dialog
+  header="Deliver"
+  [(visible)]="showModal"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [dismissableMask]="true"
+  (onHide)="subs.unsubscribe()"
+  (onShow)="prodSubcribtion()"
+>
+  <!-- Header & Tab -->
+  <div class="flex justify-between items-center mb-4">
+    <span class="text-xl font-semibold">Deliver</span>
+  </div>
+
+  <form [formGroup]="form" class="flex flex-col gap-4">
+    <!-- Delivery Type -->
+    <div>
+      <label class="block mb-1 font-medium">Delivery Type</label>
+      <p-select
+        [options]="deliveryTypes"
+        formControlName="deliveryType"
+        placeholder="Checkpoint"
+        class="w-full"
+      />
+    </div>
+
+    <!-- Checkpoint -->
+    <div>
+      <label class="block mb-1 font-medium">Checkpoint</label>
+      <p-select
+        [options]="checkpointService.checkpointsDropdown"
+        optionLabel="name"
+        optionValue="id"
+        formControlName="to_id"
+        placeholder="Select checkpoint"
+        class="w-full"
+      />
+      @if (form.get('to_id')?.invalid && form.get('to_id')?.touched) {
+        <small class="text-red-500">
+          Checkpoint is required
+        </small>
+      }
+    </div>
+
+    <!-- Delivery Date -->
+    <div>
+      <label class="block mb-1 font-medium">Delivery Date</label>
+      <p-date-picker
+        formControlName="scheduled_at"
+        dateFormat="dd/mm/yy"
+        showIcon
+        placeholder="DD/MM/YYYY"
+        class="w-full"
+      />
+      @if (form.get('scheduled_at')?.invalid && form.get('scheduled_at')?.touched) {
+        <small class="text-red-500">
+          Delivery Date is required
+        </small>
+      }
+    </div>
+
+    <!-- Selected Items Section -->
+    <h3 class="font-semibold mb-2">Selected Items</h3>
+    @for (item of items.controls; track item; let i = $index) {
+      <div class="bg-gray-100 p-3 rounded mb-4">
+        <div class="grid grid-cols-12 items-center gap-4">
+          <div class="col-span-1">{{ i + 1 }}</div>
+          <div class="col-span-1">
+            <img [src]="item.value.product.full_image_url || 'https://placehold.co/40'" width="40" />
+          </div>
+          <div class="col-span-4">
+            {{ item.value.product.code }}
+          </div>
+          <div class="col-span-3">
+            <input
+              type="number"
+              min="1"
+              [max]="item.value.max"
+              class="border rounded px-2 py-1 w-full"
+              [formControl]="getQuantityControl(i)"
+            />
+          </div>
+          <div class="col-span-3">
+            <button
+              class="px-3 py-1 text-xs text-gray-500 border rounded bg-gray-200 cursor-not-allowed"
+              [disabled]="true"
+            >
+              Maxed Out
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Driver -->
+    <label class="block font-medium mb-1">Driver</label>
+    <p-select
+      [options]="userService.couriers"
+      optionLabel="name"
+      optionValue="id"
+      placeholder="Select driver"
+      formControlName="courier_id"
+      class="w-full mb-4"
+    />
+
+    <!-- Note -->
+    <label class="block font-medium mb-1">Note</label>
+    <input
+      type="text"
+      placeholder="Note to driver"
+      formControlName="note"
+      class="border w-full px-3 py-2 rounded"
+    />
+
+  </form>
+
+  <!-- Footer -->
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" class="p-button-text" (click)="showModal = false"/>
+    <p-button
+      label="Confirm"
+      [disabled]="form.invalid"
+      (click)="confirmDelivery()"
+    />
+  </ng-template>
+</p-dialog>

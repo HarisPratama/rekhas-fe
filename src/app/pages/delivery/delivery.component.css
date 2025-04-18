@@ -1,0 +1,102 @@
+/* stock.component.scss */
+
+:host {
+  display: block;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #111827;
+}
+
+.stock-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+  transition: background-color 0.2s;
+}
+
+.tab:hover {
+  background-color: #f3f4f6;
+}
+
+.tab.active {
+  background-color: #111827;
+  color: #fff;
+}
+
+.search-bar {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.action-buttons button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+p-datatable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.p-datatable-thead {
+  background-color: #f3f4f6;
+}
+
+.p-datatable-thead th {
+  text-align: left;
+  padding: 100px;
+  font-size: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.p-datatable-tbody td {
+  padding: 12px;
+  font-size: 14px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.p-datatable-tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+img {
+  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}

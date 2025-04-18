@@ -1,0 +1,66 @@
+<script src="../../services/stock/stock.service.ts"></script><h2>🚚 Delivery</h2>
+<p-toast></p-toast>
+
+<div class="stock-tabs">
+  <button (click)="onTabChange('order_delivery')" [class.active]="type === 'order_delivery'" class="tab active">Customer</button>
+  <button (click)="onTabChange('internal_transfer')" [class.active]="type === 'internal_transfer'" class="tab">Stock</button>
+</div>
+
+<input
+  type="text"
+  placeholder="Search delivery code, from, to, etc."
+  class="search-bar"
+/>
+
+<div class="action-buttons">
+  <p-button
+    icon="pi pi-download"
+    label="Download"
+    severity="contrast"
+  />
+  @if (selectedDeliveries.length > 0) {
+    <p-button
+      icon="pi pi-crown"
+      label="Set as Priority"
+      severity="contrast"
+    />
+    <div class="w-60">
+      <p-select [options]="status" [(ngModel)]="selectedStatus" optionLabel="name" placeholder="Select a Status" class="w-full md:w-56" />
+    </div>
+    <p-button
+      icon="pi pi-trash"
+      label="Delete"
+      severity="danger"
+    />
+  }
+</div>
+
+<app-generic-table
+  [data]="virtualDeliveries"
+  [cols]="cols"
+  [first]="first"
+  [rows]="rows"
+  [totalRecords]="deliveryService.pagination.total"
+  [loading]="loading"
+  (lazyLoad)="onLazyLoad($event)"
+  (pageChange)="onPageChange($event)"
+  (onSelectData)="onSelectDelivery($event)"
+>
+  <ng-template #rowTemplate let-delivery let-rowIndex="rowIndex">
+    <td>{{ rowIndex + 1 }}</td>
+    <td>{{ delivery.code }}</td>
+    <td>{{ delivery.scheduled_at | date:'short' }}</td>
+    <td>{{ delivery.delivered_at ? (delivery.delivered_at | date:'short') : '-' }}</td>
+    <td>{{ delivery.from?.name }}</td>
+    <td>{{ delivery.to_customer?.name || delivery.to_checkpoint?.name }}</td>
+    <td>{{ delivery.items.length }}</td>
+    <td>
+      <p-badge [severity]="generateSeverity(delivery?.status)" [value]="delivery?.status"></p-badge>
+    </td>
+    <td>
+      <p-button icon="pi pi-eye" (click)="openModalDetail(delivery)" />
+    </td>
+  </ng-template>
+</app-generic-table>
+
+<app-delivery-detail-modal #deliveryDetailModal></app-delivery-detail-modal>
