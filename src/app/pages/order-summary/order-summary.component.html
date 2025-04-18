@@ -77,7 +77,7 @@
     @if (preview) {
       <p>{{selectedInvoice.value ?? '-'}}</p>
     } @else {
-      <p-select [options]="invoices" [formControl]="selectedInvoice" styleClass="mt-4" placeholder="Select Invoice" [editable]="true" optionValue="id" optionLabel="Invoice ID" class="w-full md:w-56" />
+      <p-select [options]="invoices" [formControl]="selectedInvoice" styleClass="mt-4" placeholder="Select Invoice" [editable]="true" optionValue="id" optionLabel="code" class="w-full md:w-56" />
     }
   </p-card>
 

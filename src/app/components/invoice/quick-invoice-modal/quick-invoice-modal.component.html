@@ -46,12 +46,13 @@
   <!-- Footer -->
   <ng-template pTemplate="footer">
     <button pButton type="button" label="Cancel" class="p-button-text" (click)="display = false"></button>
-    <button
+    <p-button
       pButton
       type="button"
       label="Generate Invoice"
+      [loading]="loading"
       [disabled]="!selectedCustomer?.id || !selectedProduct?.id"
       (click)="generateInvoice()">
-    </button>
+    </p-button>
   </ng-template>
 </p-dialog>

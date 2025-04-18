@@ -11,6 +11,7 @@ export interface CreateOrder {
   bank_name?: string;
   due_date: Date | string; // bisa string jika dari form input
   sales_id?: number;
+  invoice_id?: number;
 }
 
 export interface OrderInterface {

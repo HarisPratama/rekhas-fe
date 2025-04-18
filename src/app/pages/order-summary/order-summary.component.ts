@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CardModule} from 'primeng/card';
 import {CartService} from '../../services/cart/cart.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -17,6 +17,8 @@ import {OrderService} from '../../services/order/order.service';
 import {CreateOrder} from '../../services/order/shared/interface/order.interface';
 import {MessageService} from 'primeng/api';
 import {ToastModule} from 'primeng/toast';
+import {InvoiceService} from '../../services/invoice/invoice.service';
+import {debounceTime, distinctUntilChanged, Subject, Subscription, takeUntil} from 'rxjs';
 
 type NumericMeasurementKey = {
   [K in keyof CustomerMeasurement]: CustomerMeasurement[K] extends number ? K : never
@@ -29,14 +31,17 @@ type NumericMeasurementKey = {
   styleUrl: './order-summary.component.css',
   providers: [OrderService, MessageService],
 })
-export class OrderSummaryComponent implements OnInit {
+export class OrderSummaryComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private cartService: CartService,
     public orderService: OrderService,
     private messageService: MessageService,
+    private invoiceService: InvoiceService,
   ) { }
+
+  private destroy$ = new Subject<void>();
 
   cartId:string | null = null;
   cart: Cart | null = null;
@@ -52,32 +57,42 @@ export class OrderSummaryComponent implements OnInit {
   bankName: string = '';
   accountNumber: string = '';
 
-  customer = {
-    name: 'TEST-1',
-    address: 'JAKARTA',
-    whatsapp: '628787989765',
-    email: '',
-  };
-
-  items = [
-    {
-      name: 'SHIPMENT-306-CARTON-88',
-      code: 'RTW-SYNK-BL-SELF.D-SIZE-40',
-      image: 'url-to-image',
-      qty: 2,
-      price: 1500000,
-      type: 'Ready To Wear',
-    },
-  ];
-
   ngOnInit() {
     this.cartId = this.route.snapshot.paramMap.get('cartId');
     if (this.cartId) {
       this.cartService.getCart(Number(this.cartId));
-      this.cartService.cart.subscribe(cart => {
-        this.cart = cart;
-      })
+      this.cartService.cart
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(cart => {
+          this.cart = cart;
+        })
+
+      this.invoiceService.availableInvoices
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(invoice => {
+          this.invoices = invoice;
+        })
+
+      this.selectedInvoice.valueChanges
+        .pipe(
+          debounceTime(300),
+          distinctUntilChanged(),
+          takeUntil(this.destroy$)
+        )
+        .subscribe(value => {
+          if (value && this.cart && this.cart?.items && this.cart.items?.length > 0 && this.cart?.customer?.id) {
+              this.cart?.items.map((item) => {
+                this.getAvailableInvoices(item.product.id, this.cart?.customer?.id ?? 0)
+              })
+          }
+        })
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.invoiceService.availableInvoices.next([]);
   }
 
   backToCart() {
@@ -102,6 +117,10 @@ export class OrderSummaryComponent implements OnInit {
     key: NumericMeasurementKey
   ): number | undefined {
     return measurement?.[key];
+  }
+
+  getAvailableInvoices(productId: number, customerId: number) {
+    this.invoiceService.fetchAvailableInvoices({productId, customerId})
   }
 
   getTotalPrice(): number {
@@ -141,6 +160,9 @@ export class OrderSummaryComponent implements OnInit {
         account_number: this.accountNumber,
         bank_name: this.bankName,
         sales_id: 2,
+      }
+      if (this.selectedInvoice.value) {
+        payload.invoice_id = Number(this.selectedInvoice.value)
       }
 
       this.loading = true;

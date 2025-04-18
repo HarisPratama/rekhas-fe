@@ -13,6 +13,7 @@ import {PaginationResp} from '../../../shared/models/pagination-resp.model';
 export class InvoiceService {
   private apiUrl = `${environment.apiUrl}/invoices`;
   public invoices: BehaviorSubject<Invoice[]> = new BehaviorSubject<Invoice[]>([]);
+  public availableInvoices: BehaviorSubject<Invoice[]> = new BehaviorSubject<Invoice[]>([]);
   public invoice: BehaviorSubject<Invoice | null> = new BehaviorSubject<Invoice | null>(null);
   public pagination = {
     total: 0,
@@ -44,6 +45,26 @@ export class InvoiceService {
           limit: data.limit,
           totalPages: data.totalPages,
         }
+      }
+    })
+  }
+
+  fetchDetailInvoice(invoiceId: number) {
+    this.http.get<Invoice>(`${this.apiUrl}/${invoiceId}`)
+      .subscribe({
+        next: (data) => {
+          this.invoice.next(data)
+        }
+      })
+  }
+
+  fetchAvailableInvoices(param: {productId: number, customerId: number}) {
+    this.http.get<Invoice[]>(`${this.apiUrl}/available`, {
+      params: param
+    }).subscribe({
+      next: (data) => {
+        const current = this.availableInvoices.getValue();
+        this.availableInvoices.next([...current, ...data]);
       }
     })
   }
