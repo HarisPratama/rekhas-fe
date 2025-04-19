@@ -59,6 +59,21 @@ export class DashboardComponent implements OnInit {
         icon: 'pi pi-briefcase',
         routerLink: ['/workshop']
       },
+      {
+        label: 'Checkpoint',
+        icon: 'pi pi-map-marker',
+        routerLink: ['/checkpoint']
+      },
+      {
+        label: 'Employee',
+        icon: 'pi pi-users',
+        routerLink: ['/employee']
+      },
+      {
+        label: 'Customer',
+        icon: 'pi pi-heart',
+        routerLink: ['/customer']
+      },
     ]
   }
 

@@ -98,7 +98,7 @@ export class WorkshopDetailModalComponent implements OnInit, OnDestroy {
       distinctUntilChanged(),
       switchMap((query: string) => {
         this.params.search = query;
-        this.userService.getByRole(this.params, 'TAILOR');
+        this.userService.getByRole(this.params, 'CUTTER');
         return this.userService.userByRole
       })
     ).subscribe(tailor => {
@@ -111,7 +111,7 @@ export class WorkshopDetailModalComponent implements OnInit, OnDestroy {
       distinctUntilChanged(),
       switchMap((query: string) => {
         this.params.search = query;
-        this.userService.getByRole(this.params, 'CUTTER');
+        this.userService.getByRole(this.params, 'TAILOR');
         return this.userService.userByRole
       })
     ).subscribe(workers => {

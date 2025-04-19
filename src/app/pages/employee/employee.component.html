@@ -1,0 +1,74 @@
+<p-toast/>
+<div class="p-6 space-y-4">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-2 text-3xl font-bold">
+      <i class="pi pi-users text-2xl"></i>
+      <span>Employee</span>
+    </div>
+  </div>
+
+  <p-tabs value="0">
+    <p-tablist>
+      <p-tab value="0">
+        <i class="pi pi-list"></i>
+        <span class="font-bold whitespace-nowrap">List</span>
+      </p-tab>
+      <p-tab value="1">
+        <i class="pi pi-dollar"></i>
+        <span class="font-bold whitespace-nowrap">Fee</span>
+      </p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="0">
+        <div class="flex items-center justify-between mb-4 gap-10">
+          <div class="flex-1">
+            <app-search-input (search)="onSearchUser($event)"/>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-sm text-gray-600">Filter</span>
+            <i class="pi pi-sliders-h text-gray-500"></i>
+
+            <p-button icon="pi pi-download" label="Download" class="p-button-outlined" />
+            <p-button icon="pi pi-plus" severity="contrast" (click)="showAddEmployee()" label="Add Employee" class="p-button-sm p-button-black text-white" />
+          </div>
+        </div>
+
+        <!-- Table goes here -->
+        <app-generic-table
+          [data]="virtualEmployee"
+          [cols]="cols"
+          [first]="first"
+          [rows]="rows"
+          [totalRecords]="totalRecords"
+          [loading]="loading"
+          (lazyLoad)="onLazyLoad($event)"
+          (pageChange)="onPageChange($event)"
+          (onSelectData)="onSelectEmployee($event)"
+        >
+          <ng-template #rowTemplate let-user let-rowIndex="rowIndex">
+            <td>
+              <div class="flex items-center gap-2">
+                @if (user?.full_image_url) {
+                  <p-avatar [image]="user.full_image_url" class="mr-2" shape="circle" />
+                } @else {
+                  <p-avatar [label]="user.name[0]" styleClass="mr-2" shape="circle" />
+                }
+                <span>{{user?.name}}</span>
+              </div>
+            </td>
+            <td>{{ user?.role?.name }}</td>
+            <td>{{ user?.nickname }}</td>
+            <td>{{ user?.checkpoint?.name }}</td>
+            <td>
+              <p-button icon="pi pi-eye"></p-button>
+            </td>
+          </ng-template>
+        </app-generic-table>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+
+</div>
+
+<app-add-employee #addEmployeeModal/>

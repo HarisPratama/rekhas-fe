@@ -5,4 +5,5 @@ export interface PaginationReq {
   order: string;
   search: string;
   type?: string;
+  role?: string;
 }

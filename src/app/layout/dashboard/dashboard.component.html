@@ -1,6 +1,8 @@
 <header class="navbar">
   <div class="logo">REKHAS</div>
-  <p-menubar [model]="navs" />
+  <div class="flex-1 overflow-x-auto whitespace-nowrap">
+    <p-menubar [model]="navs"></p-menubar>
+  </div>
   <div class="flex items-center gap">
     <div class="profile">MUSA | <p-splitbutton label="Director" severity="secondary" [model]="items" /></div>
     <p-togglebutton [(ngModel)]="checked" (click)="toggleDarkMode()" onLabel="Dark Mode" offLabel="Light Mode" onIcon="pi pi-moon" offIcon="pi pi-sun" styleClass="w-36" ariaLabel="Do you confirm" />

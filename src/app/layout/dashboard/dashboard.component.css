@@ -10,6 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 40px;
   padding: 0 24px;
   border-bottom: 1px solid #e5e7eb;
   height: 64px;
@@ -118,3 +119,46 @@ main {
 .dashboard-actions button:hover {
   /*background-color: #374151;*/
 }
+
+::ng-deep .p-menubar {
+  overflow-x: auto !important;
+  white-space: nowrap;
+}
+
+::ng-deep .p-menubar-root-list {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  width: max-content;
+}
+
+::ng-deep .p-menuitem {
+  flex: 0 0 auto !important;
+}
+
+/* Bisa taruh di styles.scss atau style komponen dengan :host / ::ng-deep */
+
+::ng-deep .p-menubar {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+::ng-deep .p-menubar::-webkit-scrollbar {
+  height: 8px;
+}
+
+::ng-deep .p-menubar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::ng-deep .p-menubar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::ng-deep .p-menubar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+

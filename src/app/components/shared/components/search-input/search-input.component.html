@@ -1,0 +1,11 @@
+<p-iconfield styleClass="w-full">
+  <p-inputicon styleClass="pi pi-search" />
+  <input
+    type="text"
+    class="w-full"
+    pInputText
+    [placeholder]="placeholder"
+    [(ngModel)]="model"
+    (ngModelChange)="onInput($event)"
+  />
+</p-iconfield>
