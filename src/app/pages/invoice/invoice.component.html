@@ -45,8 +45,9 @@
       <td>{{ invoice?.total_amount | currency:'IDR':'symbol':'0.0-0':'id-ID' }}</td>
       <td>{{invoice?.status}}</td>
       <td>{{invoice?.order?.payment_method || '-'}}</td>
-      <td>
+      <td class="flex gap-2 items-center">
         <p-button icon="pi pi-eye" (click)="openDetailInvoice(invoice)"></p-button>
+        <p-button icon="pi pi-dollar" (click)="openDetailPayment(invoice)"></p-button>
       </td>
     </ng-template>
   </app-generic-table>
@@ -54,3 +55,4 @@
 
 <app-quick-invoice-modal #quickInvoiceModalComponent/>
 <app-detail-invoice-modal #invoiceDetailModal/>
+<app-payment-detail-modal #paymentDetailModal/>

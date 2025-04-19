@@ -1,0 +1,68 @@
+<p-dialog
+  header="🚚 Invoice"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [closable]="true"
+  (onHide)="onClose()"
+  position="bottomright"
+>
+  <p-toast/>
+  <!-- Deliver To + Status -->
+  <div class="flex justify-between">
+    <div>
+      <h1 class="text-xl font-bold">Invoice ID</h1>
+      <p>{{invoice?.code}}</p>
+    </div>
+    <p-chip icon="pi pi-circle-on" [label]="invoice?.status" />
+  </div>
+
+  <p-divider/>
+
+  @if (detailInvoice?.payments) {
+    <h3>History Payment</h3>
+    <p-table [value]="detailInvoice.payments">
+      <ng-template #header>
+        <tr>
+          <th>Amount</th>
+          <th>Note</th>
+          <th>Payment Date</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-payment>
+        <tr>
+          <td>{{ payment.amount | currency:'IDR':'symbol':'0.0-0':'id-ID' }}</td>
+          <td>{{ payment.note }}</td>
+          <td>{{ getCreatedAtFormatted(payment.created_at) }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+
+  <p-inplace styleClass="mt-10">
+    <ng-template #display>
+      <span>Add Payment</span>
+    </ng-template>
+    <ng-template #content>
+        <div class="m-0">
+          <form class="flex flex-col gap-4" [formGroup]="form" (ngSubmit)="submitPayment()">
+            <div>
+              <label>Amount</label>
+              <p-inputnumber class="w-full" inputId="currency-id" formControlName="amount" mode="currency" currency="IDR" locale="id-ID" [showButtons]="true" [minFractionDigits]="0" [maxFractionDigits]="0" />
+            </div>
+            <div>
+              <label>Note</label><br>
+              <textarea rows="5" cols="30" pTextarea formControlName="note"></textarea>
+            </div>
+            <div>
+              <label>Pick prove image</label>
+              <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000" (onSelect)="onSelectImage($event)" chooseLabel="Choose" />
+            </div>
+
+            <p-button styleClass="w-full" [loading]="loading" [disabled]="form.invalid || !proveImage" type="submit" severity="contrast" label="Submit"/>
+          </form>
+        </div>
+    </ng-template>
+  </p-inplace>
+
+</p-dialog>

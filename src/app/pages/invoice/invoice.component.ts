@@ -14,16 +14,21 @@ import {Invoice} from '../../services/invoice/shared/invoice.interface';
 import {
   DetailInvoiceModalComponent
 } from '../../components/invoice/detail-invoice-modal/detail-invoice-modal.component';
+import {
+  PaymentDetailModalComponent
+} from '../../components/invoice/payment-detail-modal/payment-detail-modal.component';
 
 @Component({
   selector: 'app-invoice',
-  imports: [ButtonModule, FormsModule, InputTextModule, DatePipe, GenericTableComponent, QuickInvoiceModalComponent, CurrencyPipe, DetailInvoiceModalComponent],
+  imports: [ButtonModule, FormsModule, InputTextModule, DatePipe, GenericTableComponent, QuickInvoiceModalComponent, CurrencyPipe, DetailInvoiceModalComponent, PaymentDetailModalComponent],
   templateUrl: './invoice.component.html',
   styleUrl: './invoice.component.css'
 })
 export class InvoiceComponent implements OnInit {
   @ViewChild('quickInvoiceModalComponent') quickInvoiceModal!: QuickInvoiceModalComponent;
   @ViewChild('invoiceDetailModal') invoiceDetailModal!: DetailInvoiceModalComponent;
+  @ViewChild('paymentDetailModal') paymentDetailModal!: PaymentDetailModalComponent;
+
   search = '';
   params: PaginationReq = {
     page: 1,
@@ -51,7 +56,7 @@ export class InvoiceComponent implements OnInit {
     { field:'sum', header: 'Sum', style: { minWidth: '200px' } },
     { field:'status', header: 'Pay Status', style: { minWidth: '200px' } },
     { field:'pay_method', header: 'Pay Method', style: { minWidth: '200px' } },
-    { field:'detail', header: 'Detail', style: { minWidth: '200px' } },
+    { field:'actions', header: 'Actions', style: { minWidth: '200px' } },
   ];
 
   constructor(public invoiceService: InvoiceService) {
@@ -117,6 +122,10 @@ export class InvoiceComponent implements OnInit {
 
   openDetailInvoice(invoice: Invoice) {
       this.invoiceDetailModal.open(invoice);
+  }
+
+  openDetailPayment(invoice: Invoice) {
+    this.paymentDetailModal.open(invoice);
   }
 
 }

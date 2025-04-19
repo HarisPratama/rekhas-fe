@@ -27,6 +27,16 @@ export class InvoiceService {
     return this.http.post(`${this.apiUrl}`, payload)
   }
 
+  createPayment(payload: any, file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    Object.keys(payload).forEach(key => {
+      formData.append(key, payload[key]);
+    })
+
+    return this.http.post(`${this.apiUrl}/payment`, formData)
+  }
+
   fetchInvoices(paramReq: PaginationReq) {
     const params: { [key: string]: any } = {};
     Object.keys(paramReq).map((key: string) => {
