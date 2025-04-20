@@ -6,7 +6,7 @@
   [closable]="true"
   (onHide)="close()">
   <p-toast/>
-  <div class="form-container">
+  <div>
 <!--    <div class="header">-->
 <!--    </div>-->
 
@@ -17,7 +17,15 @@
       </p-tablist>
       <p-tabpanels>
         <p-tabpanel value="0">
-          <app-upload-drag-drop></app-upload-drag-drop>
+          @if (errorMessages.length > 0) {
+            @for (message of errorMessages; track i; let i = $index) {
+              <span>{{message}}</span>
+              <p-divider/>
+            }
+          }
+          <p-button (click)="downloadTemplate()" icon="pi pi-download" label="Download Template"></p-button>
+          <p-divider/>
+          <app-upload-drag-drop (onUpload)="bulkUploadProduct($event)" acceptedFiles=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"></app-upload-drag-drop>
         </p-tabpanel>
         <p-tabpanel value="1">
           <form [formGroup]="stockForm" (ngSubmit)="submitForm()">

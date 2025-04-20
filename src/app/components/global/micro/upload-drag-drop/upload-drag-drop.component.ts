@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import { PrimeNG } from 'primeng/config';
 import {FileSelectEvent, FileUpload} from 'primeng/fileupload';
 import { ButtonModule } from 'primeng/button';
@@ -15,6 +15,9 @@ import { ToastModule } from 'primeng/toast';
 })
 export class UploadDragDropComponent {
   @Output() selectedFile: EventEmitter<File[]> = new EventEmitter();
+  @Output() onUpload: EventEmitter<File[]> = new EventEmitter();
+  @Input() acceptedFiles: string = 'image/*';
+  @Input() fileType: string = 'image';
   files: File[] = [];
 
   totalSize : number = 0;
@@ -55,6 +58,7 @@ export class UploadDragDropComponent {
 
   uploadEvent(callback: () => void ) {
     callback();
+    this.onUpload.emit(this.files);
   }
 
   formatSize(bytes: number) {

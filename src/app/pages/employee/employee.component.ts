@@ -75,7 +75,6 @@ export class EmployeeComponent implements OnInit {
 
   loadEmployee(): void {
     this.loading = true;
-    this.virtualEmployee = Array.from({ length: 5 });
 
     this.userService.getEmployee(this.params)
     this.userService.employees.subscribe(employee => {

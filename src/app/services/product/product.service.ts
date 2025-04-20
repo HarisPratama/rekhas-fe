@@ -23,6 +23,12 @@ export class ProductService {
   }
   constructor(private http: HttpClient) {}
 
+  getTemplateUploadExcel() {
+    return this.http.get(`${this.apiUrl}/template/download`, {
+      responseType: 'blob',
+    })
+  }
+
   getProducts(paramReq: PaginationReq): void {
     const params: { [key: string]: any } = {};
     Object.keys(paramReq).map((key: string) => {
@@ -59,6 +65,10 @@ export class ProductService {
 
   uploadProduct(formData: FormData) {
     return this.http.post<Product>(`${this.apiUrl}/upload`, formData);
+  }
+
+  bulkUploadProduct(formData: FormData) {
+    return this.http.post<Product>(`${this.apiUrl}/upload-excel`, formData);
   }
 
   bulkUploadProductImage(id: number,formData: FormData) {

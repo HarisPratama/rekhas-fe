@@ -8,12 +8,14 @@ import { ButtonModule } from 'primeng/button';
 import {TextareaModule} from 'primeng/textarea';
 import {InputNumber} from 'primeng/inputnumber';
 import {Select} from 'primeng/select';
+import { saveAs } from 'file-saver';
 import {FileSelectEvent, FileUpload, FileUploadEvent} from 'primeng/fileupload';
 import {ToastModule} from 'primeng/toast';
 import {UploadDragDropComponent} from '../../global/micro/upload-drag-drop/upload-drag-drop.component';
 import {TabsModule} from 'primeng/tabs';
 import {ProductService} from '../../../services/product/product.service';
 import {MessageService} from 'primeng/api';
+import {Divider} from 'primeng/divider';
 
 interface UploadEvent {
   originalEvent: Event;
@@ -35,6 +37,7 @@ interface UploadEvent {
     ToastModule,
     UploadDragDropComponent,
     TabsModule,
+    Divider,
   ],
   providers: [MessageService],
   templateUrl: './add-stock.component.html',
@@ -45,6 +48,7 @@ export class AddStockComponent implements OnInit {
   showModal = false;
   selectedImages: { [key: string]: File } = {};
   mainImage: File | undefined;
+  errorMessages: string[] = [];
 
   types = [
     { name: 'Collection', code: 'COLLECTION' },
@@ -68,6 +72,33 @@ export class AddStockComponent implements OnInit {
       quantity: [null, [Validators.required, Validators.min(1)]],
       description: [''],
     });
+  }
+
+  downloadTemplate() {
+    this.productService.getTemplateUploadExcel()
+    .subscribe(res => {
+      saveAs(res);
+    })
+  }
+
+  bulkUploadProduct(file: File[]) {
+    const formData = new FormData();
+    formData.append('file', file[0]);
+    this.errorMessages = [];
+    this.productService.bulkUploadProduct(formData)
+      .subscribe({
+        next: (res: any) => {
+          let error = ''
+          if (res?.errors) {
+            this.errorMessages = res?.errors;
+            error += res?.errors?.length + ' rows error';
+          }
+          this.messageService.add({text: 'Successfully uploaded', summary: 'Success Upload',  detail: error, life: 7000});
+        },
+        error: err => {
+          this.messageService.add({detail: err?.error?.message ?? 'Failed to upload'});
+        }
+      })
   }
 
 
