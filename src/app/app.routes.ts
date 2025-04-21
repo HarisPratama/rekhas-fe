@@ -16,29 +16,38 @@ import {InvoiceComponent} from './pages/invoice/invoice.component';
 import {WorkshopComponent} from './pages/workshop/workshop.component';
 import {EmployeeComponent} from './pages/employee/employee.component';
 import {CheckpointComponent} from './pages/checkpoint/checkpoint.component';
+import {LoginComponent} from './pages/login/login.component';
+import {roleGuard} from './guards/role.guard';
+import {UnauthorizedComponent} from './unauthorized/unauthorized.component';
+import {RedirectComponent} from './pages/redirect/redirect.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: DashboardComponent,
     children: [
-      { path: '', redirectTo: 'stock', pathMatch: 'full' },
-      { path: 'stock', component: StockComponent },
-      { path: 'order', component: OrderComponent },
-      { path: 'delivery', component: DeliveryComponent },
-      { path: 'product', component: ProductComponent, children: [
+      { path: '', component: RedirectComponent },
+      { path: 'stock', component: StockComponent, canActivate: [roleGuard('stock')] },
+      { path: 'order', component: OrderComponent, canActivate: [roleGuard('order')] },
+      { path: 'delivery', component: DeliveryComponent, canActivate: [roleGuard('delivery')] },
+      { path: 'product', component: ProductComponent, canActivate: [roleGuard('product')], children: [
           { path: 'ready-to-wear', component: ReadyToWearComponent },
           { path: 'ready-to-wear/:id', component: ReadyToWearDetailComponent },
           { path: 'size-measure/:id', component: SizeMeasureComponent },
         ]
       },
-      { path: 'cart', component: CartComponent },
-      { path: 'order-summary/:cartId', component: OrderSummaryComponent },
-      { path: 'invoice', component: InvoiceComponent },
-      { path: 'workshop', component: WorkshopComponent },
-      { path: 'employee', component: EmployeeComponent },
-      { path: 'checkpoint', component: CheckpointComponent },
+      { path: 'cart', component: CartComponent, canActivate: [roleGuard('cart')] },
+      { path: 'order-summary/:cartId', component: OrderSummaryComponent, canActivate: [roleGuard('order-summary')] },
+      { path: 'invoice', component: InvoiceComponent, canActivate: [roleGuard('invoice')] },
+      { path: 'workshop', component: WorkshopComponent, canActivate: [roleGuard('workshop')] },
+      { path: 'employee', component: EmployeeComponent, canActivate: [roleGuard('employee')] },
+      { path: 'checkpoint', component: CheckpointComponent, canActivate: [roleGuard('checkpoint')] },
+      { path: 'unauthorized', component: UnauthorizedComponent },
       // Add other children like invoice, delivery, etc.
     ]
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
   }
 ];

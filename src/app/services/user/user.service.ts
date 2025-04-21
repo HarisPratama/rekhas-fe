@@ -31,6 +31,21 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
+  get userLoggedIn() {
+    return JSON.parse(localStorage.getItem('user') || '{}');
+  }
+
+  loginByWhatsApp(phoneNumber: string) {
+    return this.http.post<any>(`${this.apiUrl}/send-otp`, {phoneNumber})
+  }
+
+  verifyOtp(hash: string, otp: string) {
+    return this.http.post<any>(`${this.apiUrl}/verify-otp`, {
+      hash,
+      otp
+    })
+  }
+
   getRoles() {
     this.http.get<Role[]>(`${this.apiUrlRoles}`)
       .subscribe({

@@ -19,6 +19,7 @@ import {MessageService} from 'primeng/api';
 import {ToastModule} from 'primeng/toast';
 import {InvoiceService} from '../../services/invoice/invoice.service';
 import {debounceTime, distinctUntilChanged, Subject, Subscription, takeUntil} from 'rxjs';
+import {UserService} from '../../services/user/user.service';
 
 type NumericMeasurementKey = {
   [K in keyof CustomerMeasurement]: CustomerMeasurement[K] extends number ? K : never
@@ -39,6 +40,7 @@ export class OrderSummaryComponent implements OnInit, OnDestroy {
     public orderService: OrderService,
     private messageService: MessageService,
     private invoiceService: InvoiceService,
+    private userService: UserService,
   ) { }
 
   private destroy$ = new Subject<void>();
@@ -148,7 +150,8 @@ export class OrderSummaryComponent implements OnInit, OnDestroy {
       this.orderCategory.value &&
       this.paymentMethod.value &&
       this.paymentType.value &&
-      this.dueDate.value
+      this.dueDate.value &&
+      this.userService.userLoggedIn.id
     ) {
       const payload: CreateOrder = {
         customerId: this.cart?.customer?.id,
@@ -159,7 +162,7 @@ export class OrderSummaryComponent implements OnInit, OnDestroy {
         status: 'pending',
         account_number: this.accountNumber,
         bank_name: this.bankName,
-        sales_id: 2,
+        sales_id: this.userService.userLoggedIn.id,
       }
       if (this.selectedInvoice.value) {
         payload.invoice_id = Number(this.selectedInvoice.value)
