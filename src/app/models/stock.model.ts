@@ -1,3 +1,5 @@
+import {User} from '../services/user/shared/interface/user.interface';
+
 export interface Product {
   id: number;
   name: string;
@@ -32,6 +34,7 @@ export interface Checkpoint {
   phone: string;
   type: string;
   pic_id: number;
+  pic?: User;
 }
 
 export interface Stock {

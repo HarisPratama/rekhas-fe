@@ -17,19 +17,19 @@ export class RedirectComponent implements OnInit {
     const user = JSON.parse(userStr || '');
     switch (user?.role?.name) {
       case "DIRECTOR":
-        throw this.router.navigate(['/']);
+        return this.router.navigate(['/stock']);
       case "OFFICE":
-        throw this.router.navigate(['/']);
+        return this.router.navigate(['/stock']);
       case "SALES":
-        throw this.router.navigate(['/product']);
+        return this.router.navigate(['/product']);
       case "CUTTER":
-        throw this.router.navigate(['/product']);
+        return this.router.navigate(['/product']);
       case "TAILOR":
-        throw this.router.navigate(['/product']);
+        return this.router.navigate(['/product']);
       case "COURIER":
-        throw this.router.navigate(['/delivery']);
+        return this.router.navigate(['/delivery']);
       default:
-        throw this.router.navigate(['/login']);
+        return this.router.navigate(['/login']);
     }
   }
 }

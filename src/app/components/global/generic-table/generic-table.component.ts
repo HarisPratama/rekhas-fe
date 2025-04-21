@@ -10,6 +10,7 @@ export interface Column {
   field: string;
   header: string;
   style?: any;
+  isFrozen?: boolean;
 }
 
 @Component({
@@ -28,6 +29,7 @@ export interface Column {
 export class GenericTableComponent<T = any> {
   @Input() data: T[] = [];
   @Input() cols: Column[] = [];
+  @Input() frozenColumns: any[] = [];
   @Input() first = 0;
   @Input() rows = 5;
   @Input() totalRecords = 0;

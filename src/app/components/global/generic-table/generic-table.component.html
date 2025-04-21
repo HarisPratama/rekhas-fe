@@ -9,6 +9,7 @@
     [(selection)]="selectedData"
     dataKey="id"
     [columns]="cols"
+    [frozenColumns]="frozenColumns"
     [tableStyle]="{ 'min-width': '50rem' }"
     stripedRows
     [lazy]="true"
@@ -23,7 +24,12 @@
     <ng-template #header let-columns>
       <tr>
         @for (col of columns; track col.field) {
-          <th [ngStyle]="col.style">{{ col.header }}</th>
+          @if (col?.isFrozen) {
+            <th [ngStyle]="col.style" pFrozenColumn alignFrozen="right">{{ col.header }}</th>
+          } @else {
+            <th [ngStyle]="col.style">{{ col.header }}</th>
+
+          }
         }
       </tr>
     </ng-template>

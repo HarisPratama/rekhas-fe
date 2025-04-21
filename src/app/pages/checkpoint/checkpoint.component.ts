@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {PaginationReq} from '../../../shared/models/pagination-req.model';
-import {CommonModule} from '@angular/common';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
+import { CurrencyPipe, DatePipe} from '@angular/common';
+import {FrozenColumn, TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {PaginatorModule, PaginatorState} from 'primeng/paginator';
 import {FormsModule} from '@angular/forms';
 import {AddStockComponent} from '../../components/stock/add-stock/add-stock.component';
@@ -13,7 +13,14 @@ import {
 } from '../../components/delivery/create-delivery-modal/create-delivery-modal.component';
 import {StockService} from '../../services/stock/stock.service';
 import {MessageService} from 'primeng/api';
-import {Stock} from '../../models/stock.model';
+import {Checkpoint, Stock} from '../../models/stock.model';
+import {CheckpointService} from '../../services/checkpoint/checkpoint.service';
+import {SelectModule} from 'primeng/select';
+import {SearchInputComponent} from '../../components/shared/components/search-input/search-input.component';
+import {DividerModule} from 'primeng/divider';
+import {Subject, takeUntil} from 'rxjs';
+import {CardModule} from 'primeng/card';
+import {AvatarModule} from 'primeng/avatar';
 
 interface Column {
   field: string;
@@ -23,19 +30,27 @@ interface Column {
 @Component({
   selector: 'app-checkpoint',
   imports: [
-    CommonModule,
+    AvatarModule,
+    CardModule,
+    DividerModule,
+    SelectModule,
     TableModule,
     PaginatorModule,
     FormsModule,
     ToastModule,
     GenericTableComponent,
     ButtonModule,
+    AddStockComponent,
+    CreateDeliveryModalComponent,
+    SearchInputComponent,
+    CurrencyPipe,
+    DatePipe
   ],
   templateUrl: './checkpoint.component.html',
   providers: [MessageService],
   styleUrl: './checkpoint.component.css'
 })
-export class CheckpointComponent {
+export class CheckpointComponent implements OnInit, OnDestroy {
 
   virtualStocks: Stock[] = [];
   selectedStocks: Stock[] = [];
@@ -43,18 +58,42 @@ export class CheckpointComponent {
   first = 0;
   rows = 5;
   totalRecords = 0;
+  activeTab = '';
+  selectedCheckpoint: number = 0;
+  checkpoint: Checkpoint = {
+    id: 0,
+    type: '',
+    name: '',
+    code: '',
+    image_url: '',
+    address: '',
+    phone: '',
+    pic_id: 0,
+  };
 
-  cols: Column[] = [
-    { field: 'name', header: 'Product Name' },
-    { field: 'code', header: 'Product Code' },
-    { field: 'fabric', header: 'Fabric Code' },
-    { field: 'quantity', header: 'Qty' },
-    { field: 'description', header: 'Description' },
-    { field: 'price', header: 'Price' },
-    { field: 'created_at', header: 'Date Added' },
+  stockTabs = [
+    { label: 'All', value: '' },
+    { label: 'Collection', value: 'COLLECTION' },
+    { label: 'Regular', value: 'REGULAR' },
+    { label: 'Ready to Wear', value: 'READY-TO-WEAR' },
+  ];
+
+  cols = [
+    { field: 'name', header: 'Product Name', style: { minWidth: '200px' } },
+    { field: 'code', header: 'Product Code', style: { minWidth: '200px' } },
+    { field: 'fabric', header: 'Fabric Code', style: { minWidth: '200px' } },
+    { field: 'quantity', header: 'Qty', style: { minWidth: '200px' } },
+    { field: 'description', header: 'Description', style: { minWidth: '200px' } },
+    { field: 'price', header: 'Price', style: { minWidth: '200px' } },
+    { field: 'created_at', header: 'Date Added', style: { minWidth: '200px' } },
+    { field: 'image', header: 'Image', style: { minWidth: '200px' } },
+    { field: 'checkpoint', header: 'Checkpoint', style: { minWidth: '200px' }, isFrozen: true },
+  ];
+
+  frozenColumns = [
     { field: 'checkpoint', header: 'Checkpoint' },
     { field: 'image', header: 'Image' },
-  ];
+  ]
 
   params: PaginationReq = {
     page: 1,
@@ -63,14 +102,48 @@ export class CheckpointComponent {
     orderBy: '',
     search: '',
   };
+  private destroy$ = new Subject<void>();
+
 
   constructor(
     private stockService: StockService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    public checkpointService: CheckpointService,
   ) {}
 
   ngOnInit(): void {
     this.virtualStocks = Array.from({ length: this.rows });
+    this.checkpointService.getCheckpointDropdown();
+    this.checkpointService.checkpoint.
+      pipe(
+        takeUntil(this.destroy$),
+      )
+      .subscribe(val => {
+        if(val) this.checkpoint = val;
+      }
+    )
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  get picName(): string {
+    return this.checkpoint.pic?.name ?? '-'
+  }
+
+  get checkpointName(): string {
+    return this.checkpoint?.name ?? '-'
+  }
+  get checkpointAddress(): string {
+    return this.checkpoint?.address ?? '-'
+  }
+  get checkpointPhone(): string {
+    return this.checkpoint?.phone ?? '-'
+  }
+  get checkpointImage(): string {
+    return this.checkpoint?.image_url ?? '-'
   }
 
   onLazyLoad(event: TableLazyLoadEvent): void {
@@ -85,9 +158,36 @@ export class CheckpointComponent {
   }
 
   getStocksByType(type: string) {
+    this.activeTab = type;
     this.params.type = type;
     this.virtualStocks = Array.from({ length: this.rows });
-    this.loadStocks();
+    if (this.selectedCheckpoint) {
+      this.loadStocksByCheckpoint(this.selectedCheckpoint);
+    } else {
+      this.loadStocks();
+    }
+  }
+
+  onPickCheckpoint(e: any) {
+    this.params.page = 0;
+    this.loadStocksByCheckpoint(e.value)
+    this.checkpointService.getCheckpointDetail(e.value);
+  }
+
+  loadStocksByCheckpoint(checkpoint: number) {
+    this.loading = true;
+
+    this.stockService.getStockByCheckpoint(this.params, checkpoint).subscribe({
+      next: (res) => {
+        this.virtualStocks = res.data;
+        this.totalRecords = res.total;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching stocks:', err);
+        this.loading = false;
+      },
+    });
   }
 
   loadStocks(): void {
@@ -115,8 +215,13 @@ export class CheckpointComponent {
     this.rows = event.rows ?? 5;
     this.params.page = Math.floor(this.first / this.rows) + 1;
     this.params.limit = this.rows;
-
+    console.log(event);
+    console.log(this.params.page);
     this.virtualStocks = Array.from({ length: this.rows });
-    this.loadStocks();
+    if (this.selectedCheckpoint) {
+      this.loadStocksByCheckpoint(this.selectedCheckpoint);
+    } else {
+      this.loadStocks();
+    }
   }
 }

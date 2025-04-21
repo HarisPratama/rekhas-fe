@@ -26,7 +26,16 @@ export class StockService {
     });
   }
 
-  getStockByCheckpoint(checkpoint: number): Observable<Stock[]> {
-    return this.http.get<Stock[]>(this.apiUrl + '/checkpoint/' + checkpoint);
+  getStockByCheckpoint(paramReq: PaginationReq, checkpoint: number): Observable<PaginationResp<Stock[]>> {
+    const params: { [key: string]: any } = {};
+
+    Object.keys(paramReq).map((key: string) => {
+      const typedKey = key as keyof PaginationReq;
+      if(paramReq[typedKey]) params[typedKey] = paramReq[typedKey];
+    })
+
+    return this.http.get<PaginationResp<Stock[]>>(this.apiUrl + '/checkpoint/' + checkpoint, {
+      params
+    });
   }
 }
