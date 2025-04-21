@@ -43,7 +43,10 @@
       <td>{{ getProductFabrics(invoice) }}</td>
       <td>{{ getCheckpointNames(invoice) }}</td>
       <td>{{ invoice?.total_amount | currency:'IDR':'symbol':'0.0-0':'id-ID' }}</td>
-      <td>{{invoice?.status}}</td>
+      <td>
+        <p-badge [severity]="generateSeverity(invoice?.status)" [value]="invoice?.status">
+        </p-badge>
+      </td>
       <td>{{invoice?.order?.payment_method || '-'}}</td>
       <td class="flex gap-2 items-center">
         <p-button icon="pi pi-eye" (click)="openDetailInvoice(invoice)"></p-button>

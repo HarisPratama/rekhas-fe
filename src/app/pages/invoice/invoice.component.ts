@@ -20,7 +20,7 @@ import {
 
 @Component({
   selector: 'app-invoice',
-  imports: [ButtonModule, FormsModule, InputTextModule, DatePipe, GenericTableComponent, QuickInvoiceModalComponent, CurrencyPipe, DetailInvoiceModalComponent, PaymentDetailModalComponent],
+  imports: [ButtonModule, FormsModule, InputTextModule, DatePipe, GenericTableComponent, QuickInvoiceModalComponent, CurrencyPipe, DetailInvoiceModalComponent, PaymentDetailModalComponent, Badge],
   templateUrl: './invoice.component.html',
   styleUrl: './invoice.component.css'
 })
@@ -126,6 +126,19 @@ export class InvoiceComponent implements OnInit {
 
   openDetailPayment(invoice: Invoice) {
     this.paymentDetailModal.open(invoice);
+  }
+
+  generateSeverity(status: string) {
+    switch (status) {
+      case 'PAID':
+        return 'success'
+      case 'PARTIAL':
+        return 'info'
+      case 'UNPAID':
+        return 'warn'
+      default:
+        return 'contrast'
+    }
   }
 
 }

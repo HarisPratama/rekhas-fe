@@ -15,6 +15,7 @@ import {OrderSummaryComponent} from './pages/order-summary/order-summary.compone
 import {InvoiceComponent} from './pages/invoice/invoice.component';
 import {WorkshopComponent} from './pages/workshop/workshop.component';
 import {EmployeeComponent} from './pages/employee/employee.component';
+import {CheckpointComponent} from './pages/checkpoint/checkpoint.component';
 
 export const routes: Routes = [
   {
@@ -36,6 +37,7 @@ export const routes: Routes = [
       { path: 'invoice', component: InvoiceComponent },
       { path: 'workshop', component: WorkshopComponent },
       { path: 'employee', component: EmployeeComponent },
+      { path: 'checkpoint', component: CheckpointComponent },
       // Add other children like invoice, delivery, etc.
     ]
   }

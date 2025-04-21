@@ -14,7 +14,7 @@
       <h1 class="text-xl font-bold">Invoice ID</h1>
       <p>{{invoice?.code}}</p>
     </div>
-    <p-chip icon="pi pi-circle-on" [label]="invoice?.status" />
+    <p-chip icon="pi pi-circle-on" [label]="detailInvoice?.status" />
   </div>
 
   <p-divider/>
@@ -39,11 +39,12 @@
     </p-table>
   }
 
-  <p-inplace styleClass="mt-10">
-    <ng-template #display>
-      <span>Add Payment</span>
-    </ng-template>
-    <ng-template #content>
+  @if (detailInvoice?.status && detailInvoice?.status !== 'PAID') {
+    <p-inplace styleClass="mt-10">
+      <ng-template #display>
+        <span>Add Payment</span>
+      </ng-template>
+      <ng-template #content>
         <div class="m-0">
           <form class="flex flex-col gap-4" [formGroup]="form" (ngSubmit)="submitPayment()">
             <div>
@@ -62,7 +63,8 @@
             <p-button styleClass="w-full" [loading]="loading" [disabled]="form.invalid || !proveImage" type="submit" severity="contrast" label="Submit"/>
           </form>
         </div>
-    </ng-template>
-  </p-inplace>
+      </ng-template>
+    </p-inplace>
+  }
 
 </p-dialog>
