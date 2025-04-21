@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {PaginationReq} from '../../../shared/models/pagination-req.model';
-import { CurrencyPipe, DatePipe} from '@angular/common';
+import {CurrencyPipe, DatePipe, JsonPipe} from '@angular/common';
 import {FrozenColumn, TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {PaginatorModule, PaginatorState} from 'primeng/paginator';
 import {FormsModule} from '@angular/forms';
@@ -21,6 +21,11 @@ import {DividerModule} from 'primeng/divider';
 import {Subject, takeUntil} from 'rxjs';
 import {CardModule} from 'primeng/card';
 import {AvatarModule} from 'primeng/avatar';
+import {InputTextModule} from 'primeng/inputtext';
+import {TextareaModule} from 'primeng/textarea';
+import {UserService} from '../../services/user/user.service';
+import {User} from '../../services/user/shared/interface/user.interface';
+import {FileSelectEvent, FileUploadModule} from 'primeng/fileupload';
 
 interface Column {
   field: string;
@@ -32,6 +37,9 @@ interface Column {
   imports: [
     AvatarModule,
     CardModule,
+    FileUploadModule,
+    InputTextModule,
+    TextareaModule,
     DividerModule,
     SelectModule,
     TableModule,
@@ -44,7 +52,7 @@ interface Column {
     CreateDeliveryModalComponent,
     SearchInputComponent,
     CurrencyPipe,
-    DatePipe
+    DatePipe,
   ],
   templateUrl: './checkpoint.component.html',
   providers: [MessageService],
@@ -59,6 +67,7 @@ export class CheckpointComponent implements OnInit, OnDestroy {
   rows = 5;
   totalRecords = 0;
   activeTab = '';
+  onUpdateCheckpoint = false;
   selectedCheckpoint: number = 0;
   checkpoint: Checkpoint = {
     id: 0,
@@ -70,6 +79,13 @@ export class CheckpointComponent implements OnInit, OnDestroy {
     phone: '',
     pic_id: 0,
   };
+  isEditMode = false;
+
+  checkpoint_name = '';
+  checkpoint_phone = '';
+  checkpoint_address = '';
+  picSelected: User | null = null;
+  imagePick: File | null = null;
 
   stockTabs = [
     { label: 'All', value: '' },
@@ -94,6 +110,7 @@ export class CheckpointComponent implements OnInit, OnDestroy {
     { field: 'checkpoint', header: 'Checkpoint' },
     { field: 'image', header: 'Image' },
   ]
+  pic: any[] = []
 
   params: PaginationReq = {
     page: 1,
@@ -109,6 +126,7 @@ export class CheckpointComponent implements OnInit, OnDestroy {
     private stockService: StockService,
     private messageService: MessageService,
     public checkpointService: CheckpointService,
+    private userService: UserService,
   ) {}
 
   ngOnInit(): void {
@@ -129,6 +147,72 @@ export class CheckpointComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  toggleEdit() {
+    const paramsReqPic: PaginationReq = {
+      page: 1,
+      limit: 5,
+      order: '',
+      orderBy: '',
+      search: '',
+    };
+    this.userService.getEmployee(paramsReqPic)
+    this.userService.employees
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+        this.pic = res;
+      })
+    this.isEditMode = !this.isEditMode;
+    this.checkpoint_name = this.checkpointName
+    this.checkpoint_phone = this.checkpointPhone
+    this.checkpoint_address = this.checkpointAddress
+  }
+
+  updateCheckpoint() {
+    if (this.picSelected) {
+      const payload: Checkpoint = {
+        ...this.checkpoint,
+        name: this.checkpoint_name,
+        phone: this.checkpoint_phone,
+        address: this.checkpoint_address,
+        pic: this.picSelected,
+        pic_id: this.picSelected.id
+      }
+      payload.full_image_url = undefined;
+      const formData: FormData = new FormData();
+
+      Object.keys(payload).forEach((key) => {
+        const value = payload[key as keyof typeof payload];
+        if (typeof value === 'object' && value !== null) {
+          if (key === 'pic') {
+            formData.append('pic', JSON.stringify(value));
+          } else {
+          }
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, String(value));
+        }
+      });
+
+      if (this.imagePick) {
+        formData.append('image', this.imagePick);
+      }
+      this.onUpdateCheckpoint = true;
+
+      this.checkpointService.updateCheckpointDetail(this.checkpoint.id, formData)
+        .subscribe({
+          next: (res) => {
+            this.messageService.add({detail: 'Successfully updated checkpoint', severity: 'success'});
+            this.onUpdateCheckpoint = false;
+            location.reload();
+          },
+          error: (err) => {
+            this.onUpdateCheckpoint = false;
+            this.messageService.add({detail: err?.error?.message ?? 'Failed to update checkpoint', severity: 'error'});
+          }
+        })
+    }
+  }
+
+
   get picName(): string {
     return this.checkpoint.pic?.name ?? '-'
   }
@@ -143,7 +227,7 @@ export class CheckpointComponent implements OnInit, OnDestroy {
     return this.checkpoint?.phone ?? '-'
   }
   get checkpointImage(): string {
-    return this.checkpoint?.image_url ?? '-'
+    return this.checkpoint?.phone ?? '-'
   }
 
   onLazyLoad(event: TableLazyLoadEvent): void {
@@ -223,5 +307,17 @@ export class CheckpointComponent implements OnInit, OnDestroy {
     } else {
       this.loadStocks();
     }
+  }
+
+  onSelectImage(e: FileSelectEvent): void {
+    this.imagePick = e.files[0]
+  }
+
+  get imagePreview() {
+    if (this.imagePick) {
+      return URL.createObjectURL(this.imagePick);
+    }
+
+    return null;
   }
 }

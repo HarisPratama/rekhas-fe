@@ -7,13 +7,13 @@
     <p-select styleClass="w-50" [(ngModel)]="selectedCheckpoint"  (onChange)="onPickCheckpoint($event)" [options]="checkpointService.checkpointsDropdown" optionValue="id" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Checkpoint">
       <ng-template #selectedItem let-selectedOption>
         <div class="flex items-center gap-2">
-          <img [src]="selectedOption?.image_url" style="width: 18px" />
+          <img [src]="selectedOption?.full_image_url" style="width: 18px" />
           <div>{{ selectedOption.name }}</div>
         </div>
       </ng-template>
       <ng-template let-country #item>
         <div class="flex items-center gap-2">
-          <img [src]="country?.image_url" style="width: 18px" />
+          <img [src]="country?.full_image_url" style="width: 18px" />
           <div>{{ country.name }}</div>
         </div>
       </ng-template>
@@ -24,26 +24,83 @@
 
 <div class="grid grid-cols-3 gap-4 mt-10">
   <div class="">
-    <p-card header="Detail">
+    <p-card>
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl">Detail</h1>
+        @if (checkpoint.id) {
+          <p-button (click)="toggleEdit()" icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary"></p-button>
+        }
+      </div>
       <p-divider></p-divider>
         <div class="flex flex-col gap-6">
-            <img [src]="checkpoint.image_url" [alt]="checkpoint.name">
-            <div>
-              <p class="font-bold">Nama Toko</p>
-              <p class="text-lg">{{checkpointName}}</p>
-            </div>
-            <div>
-              <p class="font-bold">Phone Number</p>
-              <p class="text-lg">{{checkpointPhone}}</p>
-            </div>
-            <div>
-              <p class="font-bold">Address</p>
-              <p class="text-lg">{{checkpointAddress}}</p>
-            </div>
-            <div class="flex gap-2 items-center">
-              <p-avatar icon="pi pi-user" class="mr-2" size="xlarge" shape="circle" />
-              <p>{{picName}}</p>
-            </div>
+          <img [src]="imagePreview || checkpoint.full_image_url" [alt]="checkpoint.name">
+          @if (isEditMode) {
+            <p-fileupload #fu mode="basic" (onSelect)="onSelectImage($event)" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]" accept="image/*" maxFileSize="1000000" />
+          }
+          <!-- Nama Toko -->
+          <div>
+            <p class="font-bold">Nama Toko</p>
+            @if (isEditMode) {
+              <input
+                type="text"
+                pInputText
+                class="w-full text-lg"
+                [(ngModel)]="checkpoint_name"
+              />
+            } @else {
+              <p class="text-lg">{{ checkpointName }}</p>
+            }
+          </div>
+
+          <!-- Phone Number -->
+          <div>
+            <p class="font-bold">Phone Number</p>
+            @if (isEditMode) {
+              <input
+                type="text"
+                pInputText
+                class="w-full text-lg"
+                [(ngModel)]="checkpoint_phone"
+              />
+            } @else {
+              <p class="text-lg">{{ checkpointPhone }}</p>
+            }
+          </div>
+
+          <!-- Address -->
+          <div>
+            <p class="font-bold">Address</p>
+            @if (isEditMode) {
+              <textarea
+                pTextarea
+                class="w-full text-lg"
+                [(ngModel)]="checkpoint_address"
+              ></textarea>
+            } @else {
+              <p class="text-lg">{{ checkpointAddress }}</p>
+            }
+          </div>
+
+          <!-- PIC -->
+          <div class="flex gap-2 items-center">
+            <p-avatar icon="pi pi-user" class="mr-2" size="xlarge" shape="circle" />
+            @if (isEditMode) {
+              <p-select
+                [options]="pic"
+                optionLabel="name"
+                styleClass="w-full"
+                [placeholder]="picName || 'Select PIC'"
+                [(ngModel)]="picSelected"
+              />
+            } @else {
+              <p>{{ picName }}</p>
+            }
+          </div>
+
+          @if (isEditMode) {
+            <p-button [loading]="onUpdateCheckpoint" [disabled]="!picSelected" label="Save" styleClass="w-full" severity="contrast" (click)="updateCheckpoint()"></p-button>
+          }
+
         </div>
     </p-card>
   </div>

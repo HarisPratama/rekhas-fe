@@ -31,6 +31,7 @@ export interface Checkpoint {
   address: string;
   code: string;
   image_url: string;
+  full_image_url?: string;
   phone: string;
   type: string;
   pic_id: number;

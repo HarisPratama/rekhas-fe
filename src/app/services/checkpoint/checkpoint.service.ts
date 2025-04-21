@@ -29,4 +29,7 @@ export class CheckpointService {
       }
     });
   }
+  updateCheckpointDetail(id: number, payload: FormData) {
+    return this.http.put(this.apiUrl + '/' + id, payload)
+  }
 }
