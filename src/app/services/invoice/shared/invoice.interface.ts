@@ -1,9 +1,15 @@
 import {Customer} from '../../customer/shared/interface/customer.interface';
 import {Product} from '../../../models/stock.model';
+import {OrderInterface} from '../../order/shared/interface/order.interface';
 
 export interface Invoice {
+  id?: number;
   issued_at: string;
   code: string;
+  status?: string;
+  note?: string;
+  created_at?: string;
+  order?: OrderInterface;
   customer: Customer;
   products: Product[];
   fabrics: Product[];

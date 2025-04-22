@@ -16,6 +16,7 @@ import {CreateInvoiceDto} from '../../../services/invoice/shared/invoice.interfa
 import {InvoiceService} from '../../../services/invoice/invoice.service';
 import {MessageService} from 'primeng/api';
 import {ToastModule} from 'primeng/toast';
+import {DetailInvoiceTemplateComponent} from '../../invoice/detail-invoice-template/detail-invoice-template.component';
 
 @Component({
   selector: 'app-order-detail-modal',
@@ -34,7 +35,8 @@ import {ToastModule} from 'primeng/toast';
     NgForOf,
     Tag,
     CommonModule,
-    ToastModule
+    ToastModule,
+    DetailInvoiceTemplateComponent
   ],
   templateUrl: './order-detail-modal.component.html',
   styleUrl: './order-detail-modal.component.css',
@@ -46,6 +48,7 @@ export class OrderDetailModalComponent {
   comission = ''
   order: any;
   detailOrder: any;
+  generatingPdf = false;
 
   constructor(
     public orderService: OrderService,
@@ -112,17 +115,52 @@ export class OrderDetailModalComponent {
 
   getSeverity(product: any) {
     switch (product?.status) {
-      case 'DONE':
+      case 'completed':
         return 'success';
-
-      case 'ON_PROCESS':
+      case 'on_process':
         return 'warn';
-
-      case 'OUTOFSTOCK':
-        return 'danger';
-
+      case 'on_request':
+        return 'info';
       default:
         return 'warn';
     }
   }
+
+  previewPDF() {
+    this.generatingPdf = true;
+    const element = document.getElementById('invoiceContent');
+    if (!element) return;
+
+    // Tunggu semua gambar dalam element selesai dimuat
+    const images = Array.from(element.querySelectorAll('img'));
+    const promises = images.map((img: any) => {
+      return new Promise((resolve) => {
+        if (img.complete) {
+          resolve(true);
+        } else {
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(true);
+        }
+      });
+    });
+
+    Promise.all(promises).then(() => {
+      import('html2pdf.js').then((module: any) => {
+        const html2pdf = module.default;
+
+        const options = {
+          margin: 0.5,
+          filename: 'invoice.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(options).from(element).outputPdf('dataurlnewwindow');
+
+        this.generatingPdf = false;
+      });
+    });
+  }
+
 }

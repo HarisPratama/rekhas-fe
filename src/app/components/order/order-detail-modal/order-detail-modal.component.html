@@ -49,27 +49,29 @@
 
   <p-divider/>
 
-  <!-- Order Date -->
-  <div class="section">
-    <div class="section-header">
-      <label>Order Date</label><br>
-      @if (order && order?.created_at) {
-        <p-button icon="pi pi-calendar" variant="outlined" severity="contrast" [label]="scheduledAtFormatted"></p-button>
-      }
+  <div class="flex gap-4">
+    <!-- Order Date -->
+    <div class="section">
+      <div class="section-header">
+        <label>Order Date</label><br>
+        @if (order && order?.created_at) {
+          <p-button icon="pi pi-calendar" variant="outlined" severity="contrast" [label]="scheduledAtFormatted"></p-button>
+        }
+      </div>
+    </div>
+    <!-- Due Date -->
+    <div class="section">
+      <div class="section-header">
+        <label>Due Date</label><br>
+        @if (order && order?.due_date) {
+          <p-button icon="pi pi-calendar" variant="outlined" severity="contrast" [label]="dueDateFormatted"></p-button>
+        }
+      </div>
     </div>
   </div>
 
-  <p-divider/>
 
-  <!-- Due Date -->
-  <div class="section">
-    <div class="section-header">
-      <label>Due Date</label><br>
-      @if (order && order?.due_date) {
-        <p-button icon="pi pi-calendar" variant="outlined" severity="contrast" [label]="dueDateFormatted"></p-button>
-      }
-    </div>
-  </div>
+
 
   <p-divider/>
 
@@ -117,8 +119,8 @@
                   [alt]="item?.product?.name"
                 />
                 <p-tag
-                  [value]="item?.product?.status || 'On Process'"
-                  [severity]="getSeverity(item.product)"
+                  [value]="item?.workshops?.[0]?.status || 'On Process'"
+                  [severity]="getSeverity(item?.workshops?.[0])"
                   class="absolute"
                   styleClass="dark:!bg-surface-900"
                   [style.left.px]="4"
@@ -156,7 +158,10 @@
       @if (!detailOrder?.invoice) {
         <p-button styleClass="mt-3 w-full" icon="pi pi-arrow-right" iconPos="right" label="Generate Invoice" severity="contrast" [loading]="generatingInvoice" (click)="generateInvoice()"/>
       } @else {
-        <p-button styleClass="mt-3 w-full" icon="pi pi-arrow-right" iconPos="right" label="Go to invoice Detail" severity="contrast"/>
+        <p-button (click)="previewPDF()" [loading]="generatingPdf" styleClass="mt-3 w-full" icon="pi pi-arrow-right" iconPos="right" label="Go to invoice Detail" severity="contrast"/>
+        <div class="hidden">
+          <app-detail-invoice-template [invoice]="detailOrder.invoice"/>
+        </div>
       }
     </div>
   </div>
