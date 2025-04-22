@@ -291,8 +291,8 @@
             </div>
 
             <div class="footer">
-              <button pButton type="button" label="Clear Form" class="p-button-secondary" (click)="clearForm()"></button>
-              <button pButton type="submit" label="Submit" [disabled]="stockForm.invalid || !mainImage?.name"></button>
+              <p-button type="button" label="Clear Form" class="p-button-secondary" severity="contrast" (click)="clearForm()"></p-button>
+              <p-button type="submit" label="Submit" severity="success" [loading]="onSubmit" [disabled]="stockForm.invalid || !mainImage?.name"></p-button>
             </div>
           </form>
         </p-tabpanel>

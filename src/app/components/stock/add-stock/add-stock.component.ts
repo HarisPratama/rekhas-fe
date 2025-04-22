@@ -49,6 +49,7 @@ export class AddStockComponent implements OnInit {
   selectedImages: { [key: string]: File } = {};
   mainImage: File | undefined;
   errorMessages: string[] = [];
+  onSubmit = false;
 
   types = [
     { name: 'Collection', code: 'COLLECTION' },
@@ -137,6 +138,7 @@ export class AddStockComponent implements OnInit {
 
   submitForm() {
       if (this.stockForm.valid && this.mainImage?.name) {
+        this.onSubmit = true;
         const values = this.stockForm.value;
 
         // Handle API call here
@@ -165,19 +167,20 @@ export class AddStockComponent implements OnInit {
               this.productService.bulkUploadProductImage(res.id, formDataImages).subscribe({
                 next: res => {
                   this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Success upload product images', life: 3000 });
-                  setTimeout(() => {
-                    this.close()
-                  }, 3000)
+                  this.close()
+                  location.reload();
                 },
                 error: err => {
                   this.messageService.add({severity: 'error', summary: 'Error uploading product images', detail: err.message});
                 }
               })
+
+              this.onSubmit = false;
             }
           },
           error: err => {
-            console.error('Error', err)
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+            this.onSubmit = false;
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err?.error?.message ?? 'Failed submission', life: 3000 });
           },
         });
 
