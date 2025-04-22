@@ -15,6 +15,7 @@ import {ButtonModule} from 'primeng/button';
 import {
   CreateDeliveryModalComponent
 } from '../../components/delivery/create-delivery-modal/create-delivery-modal.component';
+import {SearchInputComponent} from '../../components/shared/components/search-input/search-input.component';
 
 interface Column {
   field: string;
@@ -34,7 +35,8 @@ interface Column {
     ToastModule,
     GenericTableComponent,
     ButtonModule,
-    CreateDeliveryModalComponent
+    CreateDeliveryModalComponent,
+    SearchInputComponent
   ],
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None,
@@ -103,6 +105,12 @@ export class StockComponent implements OnInit {
   getStocksByType(type: string) {
     this.params.type = type;
     this.activeTab = type;
+    this.virtualStocks = Array.from({ length: this.rows });
+    this.loadStocks();
+  }
+
+  onSearch(query: any): void {
+    this.params.search = query;
     this.virtualStocks = Array.from({ length: this.rows });
     this.loadStocks();
   }

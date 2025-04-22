@@ -6,13 +6,9 @@
   <button (click)="onTabChange('internal_transfer')" [class.active]="type === 'internal_transfer'" class="tab">Stock</button>
 </div>
 
-<input
-  type="text"
-  placeholder="Search delivery code, from, to, etc."
-  class="search-bar"
-/>
+<app-search-input (search)="onSearch($event)" placeholder="Search delivery code, from, to, etc."></app-search-input>
 
-<div class="action-buttons">
+<div class="action-buttons mt-10">
   <p-button
     icon="pi pi-download"
     label="Download"

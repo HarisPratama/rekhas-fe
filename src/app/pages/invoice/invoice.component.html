@@ -10,13 +10,7 @@
   </div>
 
   <div class="flex justify-between items-center mb-4">
-    <input
-      type="text"
-      pInputText
-      placeholder="Search orders"
-      class="w-full max-w-md p-inputtext-sm"
-      [(ngModel)]="search"
-    />
+    <app-search-input (search)="onSearch($event)" placeholder="Search by name, id, invoice code"></app-search-input>
     <div class="flex gap-2">
       <p-button icon="pi pi-download" label="Download" class="p-button-outlined"></p-button>
       <p-button icon="pi pi-plus" (click)="showModal()" label="Quick Invoice" class="p-button-black"></p-button>

@@ -14,6 +14,7 @@ import {
   DeliveryDetailModalComponent
 } from '../../components/delivery/delivery-detail-modal/delivery-detail-modal.component';
 import {BadgeModule} from 'primeng/badge';
+import {SearchInputComponent} from '../../components/shared/components/search-input/search-input.component';
 
 interface Status {
   name: string;
@@ -30,7 +31,8 @@ interface Status {
     DatePipe,
     FormsModule,
     DeliveryDetailModalComponent,
-    BadgeModule
+    BadgeModule,
+    SearchInputComponent
   ],
   providers: [MessageService, DeliveryService],
   templateUrl: './delivery.component.html',
@@ -91,6 +93,12 @@ export class DeliveryComponent implements OnInit {
 
       this.loadDeliveries();
     }
+  }
+
+  onSearch(query: string) {
+    this.params.search = query;
+    this.virtualDeliveries = Array.from({ length: this.rows });
+    this.loadDeliveries()
   }
 
   loadDeliveries(): void {

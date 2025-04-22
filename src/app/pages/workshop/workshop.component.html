@@ -1,8 +1,9 @@
 <h2>🧾 Workshop</h2>
 
-<input type="text" placeholder="Search orders" class="mt-10 search-bar" />
+<div class="mt-10"></div>
+<app-search-input (search)="onSearch($event)"></app-search-input>
 
-<div class="flex gap-2">
+<div class="flex gap-2 mt-10">
   <p-button severity="contrast">Filter</p-button>
   <p-button severity="contrast">Download</p-button>
 </div>

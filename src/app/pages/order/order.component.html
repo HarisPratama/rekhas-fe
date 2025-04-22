@@ -6,9 +6,9 @@
   <p-button severity="secondary">Items</p-button>
 </div>
 
-<input type="text" placeholder="Search orders" class="search-bar" />
+<app-search-input (search)="onSearch($event)"></app-search-input>
 
-<div class="action-buttons">
+<div class="action-buttons mt-10">
   <p-button severity="contrast">Filter</p-button>
   <p-button severity="contrast">Select</p-button>
   <p-button severity="contrast">Download</p-button>

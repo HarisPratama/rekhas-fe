@@ -6,9 +6,9 @@
   }
 </div>
 
-<input type="text" placeholder="Search products name, product code, etc." class="search-bar" />
+<app-search-input (search)="onSearch($event)" placeholder="Search products name, product code, etc."></app-search-input>
 
-<div class="action-buttons">
+<div class="action-buttons mt-10">
   <p-button icon="pi pi-download" label="Download" severity="contrast" />
   <p-button (click)="openAddStockModal()" icon="pi pi-plus" label="Add Stock" severity="contrast" />
 

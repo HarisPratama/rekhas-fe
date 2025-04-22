@@ -10,6 +10,7 @@ import {Workshop} from '../../services/workshop/shared/workshop.interface';
 import {
   WorkshopDetailModalComponent
 } from '../../components/workshop/workshop-detail-modal/workshop-detail-modal.component';
+import {SearchInputComponent} from '../../components/shared/components/search-input/search-input.component';
 
 @Component({
   selector: 'app-workshop',
@@ -18,6 +19,7 @@ import {
     Button,
     GenericTableComponent,
     WorkshopDetailModalComponent,
+    SearchInputComponent,
   ],
   templateUrl: './workshop.component.html',
   styleUrl: './workshop.component.css'
@@ -67,6 +69,12 @@ export class WorkshopComponent implements OnInit {
 
       this.loadWorkshops();
     }
+  }
+
+  onSearch(query: string) {
+    this.params.search = query;
+    this.virtualWorkshops = Array.from({ length: this.rows });
+    this.loadWorkshops();
   }
 
   loadWorkshops(): void {

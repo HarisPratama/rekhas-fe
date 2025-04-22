@@ -17,10 +17,11 @@ import {
 import {
   PaymentDetailModalComponent
 } from '../../components/invoice/payment-detail-modal/payment-detail-modal.component';
+import {SearchInputComponent} from '../../components/shared/components/search-input/search-input.component';
 
 @Component({
   selector: 'app-invoice',
-  imports: [ButtonModule, FormsModule, InputTextModule, DatePipe, GenericTableComponent, QuickInvoiceModalComponent, CurrencyPipe, DetailInvoiceModalComponent, PaymentDetailModalComponent, Badge],
+  imports: [ButtonModule, FormsModule, InputTextModule, DatePipe, GenericTableComponent, QuickInvoiceModalComponent, CurrencyPipe, DetailInvoiceModalComponent, PaymentDetailModalComponent, Badge, SearchInputComponent],
   templateUrl: './invoice.component.html',
   styleUrl: './invoice.component.css'
 })
@@ -75,6 +76,12 @@ export class InvoiceComponent implements OnInit {
 
       this.loadInvoice()
     }
+  }
+
+  onSearch(query: any): void {
+    this.params.search = query;
+    this.virtualInvoices = Array.from({ length: this.rows });
+    this.loadInvoice();
   }
 
   loadInvoice() {

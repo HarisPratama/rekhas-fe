@@ -9,10 +9,11 @@ import {Button, ButtonModule} from 'primeng/button';
 import {GenericTableComponent} from '../../components/global/generic-table/generic-table.component';
 import {BadgeModule} from 'primeng/badge';
 import {OrderDetailModalComponent} from '../../components/order/order-detail-modal/order-detail-modal.component';
+import {SearchInputComponent} from '../../components/shared/components/search-input/search-input.component';
 
 @Component({
   selector: 'app-order',
-  imports: [CommonModule, ButtonModule, BadgeModule, GenericTableComponent, OrderDetailModalComponent],
+  imports: [CommonModule, ButtonModule, BadgeModule, GenericTableComponent, OrderDetailModalComponent, SearchInputComponent],
   templateUrl: './order.component.html',
   styleUrl: './order.component.css'
 })
@@ -60,6 +61,12 @@ export class OrderComponent implements OnInit {
 
       this.loadOrders();
     }
+  }
+
+  onSearch(query: any): void {
+    this.params.search = query;
+    this.virtualOrders = Array.from({ length: this.rows });
+    this.loadOrders();
   }
 
   loadOrders(): void {
