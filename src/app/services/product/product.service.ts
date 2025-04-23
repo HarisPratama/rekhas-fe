@@ -30,6 +30,7 @@ export class ProductService {
   }
 
   getProducts(paramReq: PaginationReq): void {
+    this.products.next([]);
     const params: { [key: string]: any } = {};
     Object.keys(paramReq).map((key: string) => {
       const typedKey = key as keyof PaginationReq;

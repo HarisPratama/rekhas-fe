@@ -10,6 +10,7 @@ import {ProductService} from '../../../services/product/product.service';
 import {Product} from '../../../models/stock.model';
 import {SearchInputComponent} from '../../../components/shared/components/search-input/search-input.component';
 import {PaginationReq} from '../../../../shared/models/pagination-req.model';
+import {SkeletonModule} from 'primeng/skeleton';
 
 
 interface LazyEvent {
@@ -25,14 +26,15 @@ interface LazyEvent {
     SearchInputComponent,
     DataViewModule,
     ScrollerModule,
-    InfiniteScrollDirective
+    InfiniteScrollDirective,
+    SkeletonModule
   ],
   templateUrl: './ready-to-wear.component.html',
   styleUrl: './ready-to-wear.component.css'
 })
 export class ReadyToWearComponent implements OnInit, OnDestroy {
-  constructor(private location: Location, private router: Router, public productService: ProductService) { }
 
+  skeletons = Array.from(Array(10).keys());
   loading = false;
   scrollDisabled = false;
   products: Product[] = [];
@@ -45,17 +47,10 @@ export class ReadyToWearComponent implements OnInit, OnDestroy {
     type: 'READY-TO-WEAR'
   };
 
-  onScroll() {
-    console.log('scroll');
-    if (this.loading) return;
-
-    console.log('masuk')
-    this.params.page++; // ✅ increment halaman
-    this.fetchProducts(); // 🚀 ambil data baru
-  }
-
   destroy$: Subject<void> = new Subject();
   items!: any[][];
+
+  constructor(private location: Location, private router: Router, public productService: ProductService) {}
 
   ngOnInit() {
     this.fetchProducts();
@@ -64,10 +59,9 @@ export class ReadyToWearComponent implements OnInit, OnDestroy {
       .subscribe({
         next: data => {
           if (data && data.length > 0) {
-            this.products = [...this.products, ...data]; // append
             this.loading = false;
+            this.products = [...this.products, ...data];
 
-            console.log(data.length, '<', this.params.limit)
             if (data.length < this.params.limit) {
               this.scrollDisabled = true;
             }
@@ -80,6 +74,13 @@ export class ReadyToWearComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  onScroll() {
+    if (this.loading) return;
+
+    this.params.page++; // ✅ increment halaman
+    this.fetchProducts(); // 🚀 ambil data baru
   }
 
   fetchProducts() {

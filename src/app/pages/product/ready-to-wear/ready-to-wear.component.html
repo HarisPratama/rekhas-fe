@@ -29,4 +29,18 @@
       </div>
     </div>
   }
+
+  <!-- SKELETON LOADING -->
+  @if (loading) {
+    @for (i of skeletons; track i) {
+      <div class="product-card">
+        <p-skeleton height="150px" class="mb-2"></p-skeleton>
+        <div class="info">
+          <p-skeleton width="80%" class="mb-2"></p-skeleton>
+          <p-skeleton width="60%" class="mb-2"></p-skeleton>
+          <p-skeleton width="40%" class="mb-2"></p-skeleton>
+        </div>
+      </div>
+    }
+  }
 </div>
