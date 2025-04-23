@@ -25,13 +25,8 @@ import {DetailInvoiceTemplateComponent} from '../detail-invoice-template/detail-
     FormsModule,
     AvatarModule,
     Button,
-    Chip,
-    CurrencyPipe,
-    DataView,
     Dialog,
     Divider,
-    NgForOf,
-    Tag,
     CommonModule,
     ToastModule,
     DetailInvoiceTemplateComponent

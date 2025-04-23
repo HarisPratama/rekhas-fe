@@ -1,3 +1,9 @@
+:host ::ng-deep {
+  .p-scroller-viewport {
+    flex: none;
+  }
+}
+
 .header {
   display: flex;
   align-items: center;

@@ -1,17 +1,23 @@
-<div class="header">
+<div class="flex gap-10 items-center">
   <button class="back-btn" (click)="goBack()">← Back to Products</button>
-  <h2>Listing <span class="count">(5503)</span></h2>
+  <h2 class="text-2xl font-bold">Listing <span class="count">({{productService.pagination.total}})</span></h2>
 </div>
 
-<div class="toolbar">
-  <input type="text" placeholder="Search by product code" class="search-bar" />
+<div class="toolbar mt-10">
+  <app-search-input class="flex-1" placeholder="Search by product code"/>
   <div class="actions">
     <button>Filter</button>
     <button>Sort By</button>
   </div>
 </div>
 
-<div class="product-grid">
+<div class="product-grid"
+     infiniteScroll
+     [infiniteScrollDistance]="2"
+     [infiniteScrollThrottle]="200"
+     (scrolled)="onScroll()"
+     [infiniteScrollDisabled]="scrollDisabled"
+>
   @for (item of products; track item.id) {
     <div (click)="goToDetail(item.id)" class="product-card">
       <img [src]="item.full_image_url ?? 'https://placehold.co/40'" alt="product image" />
