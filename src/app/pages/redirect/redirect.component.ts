@@ -14,7 +14,10 @@ export class RedirectComponent implements OnInit {
 
   ngOnInit() {
     const userStr  = localStorage.getItem('user');
-    const user = JSON.parse(userStr || '');
+    const user = JSON.parse(userStr || '{}');
+    if (!userStr) {
+      this.router.navigate(['/login']);
+    }
     switch (user?.role?.name) {
       case "DIRECTOR":
         return this.router.navigate(['/stock']);
