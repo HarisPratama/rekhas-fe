@@ -20,6 +20,8 @@ import {LoginComponent} from './pages/login/login.component';
 import {roleGuard} from './guards/role.guard';
 import {UnauthorizedComponent} from './unauthorized/unauthorized.component';
 import {RedirectComponent} from './pages/redirect/redirect.component';
+import {CollectionComponent} from './pages/product/collection/collection.component';
+import {CollectionDetailComponent} from './pages/product/collection/collection-detail/collection-detail.component';
 
 export const routes: Routes = [
   {
@@ -32,7 +34,9 @@ export const routes: Routes = [
       { path: 'delivery', component: DeliveryComponent, canActivate: [roleGuard('delivery')] },
       { path: 'product', component: ProductComponent, canActivate: [roleGuard('product')], children: [
           { path: 'ready-to-wear', component: ReadyToWearComponent },
+          { path: 'collection', component: CollectionComponent },
           { path: 'ready-to-wear/:id', component: ReadyToWearDetailComponent },
+          { path: 'collection/:id', component: CollectionDetailComponent },
           { path: 'size-measure/:id', component: SizeMeasureComponent },
         ]
       },

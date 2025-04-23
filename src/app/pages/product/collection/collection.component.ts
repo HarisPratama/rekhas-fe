@@ -1,31 +1,30 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { Location} from '@angular/common';
+import {Product} from '../../../models/stock.model';
+import {PaginationReq} from '../../../../shared/models/pagination-req.model';
+import {Subject, takeUntil} from 'rxjs';
+import {CommonModule, Location} from '@angular/common';
 import {Router} from '@angular/router';
+import {ProductService} from '../../../services/product/product.service';
+import {SearchInputComponent} from '../../../components/shared/components/search-input/search-input.component';
 import {DataViewModule} from 'primeng/dataview';
 import {ScrollerModule} from 'primeng/scroller';
-import {Subject, takeUntil} from 'rxjs';
-
-import {ProductService} from '../../../services/product/product.service';
-import {Product} from '../../../models/stock.model';
-import {SearchInputComponent} from '../../../components/shared/components/search-input/search-input.component';
-import {PaginationReq} from '../../../../shared/models/pagination-req.model';
 import {SkeletonModule} from 'primeng/skeleton';
 import {ProductGridComponent} from '../../../components/global/product-grid/product-grid.component';
 
 @Component({
-  selector: 'app-ready-to-wear',
+  selector: 'app-collection',
   imports: [
+    CommonModule,
     SearchInputComponent,
     DataViewModule,
     ScrollerModule,
     SkeletonModule,
     ProductGridComponent
   ],
-  templateUrl: './ready-to-wear.component.html',
-  styleUrl: './ready-to-wear.component.css'
+  templateUrl: './collection.component.html',
+  styleUrl: './collection.component.css'
 })
-export class ReadyToWearComponent implements OnInit, OnDestroy {
-
+export class CollectionComponent implements OnInit, OnDestroy {
   loading = false;
   scrollDisabled = false;
   products: Product[] = [];
@@ -35,7 +34,7 @@ export class ReadyToWearComponent implements OnInit, OnDestroy {
     order: '',
     orderBy: '',
     search: '',
-    type: 'READY-TO-WEAR'
+    type: 'COLLECTION'
   };
 
   destroy$: Subject<void> = new Subject();
@@ -84,8 +83,7 @@ export class ReadyToWearComponent implements OnInit, OnDestroy {
   }
 
   goToDetail(id:number) {
-    this.router.navigate(['product/ready-to-wear/' + id]);
+    this.router.navigate(['product/collection', id]);
+
   }
-
-
 }

@@ -1,0 +1,60 @@
+.detail-container {
+  padding: 20px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+}
+
+.image-box img {
+  width: 350px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.info-box {
+  flex: 1;
+}
+
+.shipment {
+  font-size: 14px;
+  color: #888;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.thumbnail-box img {
+  height: 160px;
+  object-fit: cover;
+  border: 1px solid #eee;
+  margin-bottom: 20px;
+  border-radius: 6px;
+}
+
+.sizes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.size-card {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  text-align: center;
+}

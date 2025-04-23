@@ -3,13 +3,14 @@
 <div class="p-8 bg-[#f9fafb] min-h-screen">
   <div (click)="goBack()" class="mb-6 cursor-pointer text-sm text-gray-500 hover:underline">&lt; Back</div>
   <h1 class="text-3xl font-bold mb-8">Size Measure</h1>
+  {{category}}
 
   <!-- Customer Section -->
   <div class="bg-white p-6 rounded-xl shadow mb-6">
     <h2 class="text-lg font-semibold mb-4">Customer</h2>
 
     @if (!isAddingNewCustomer) {
-      <p-select [options]="customers" [formControl]="selectedCustomer" (onChange)="onSelectCustomer($event)" placeholder="Select Existing Customer" [editable]="true" optionValue="id" optionLabel="name" class="w-full md:w-56" />
+      <p-autocomplete styleClass="w-full" [formControl]="selectedCustomer" [suggestions]="customers" optionLabel="name" [dropdown]="true" (onSelect)="onSelectCustomer($event)" (completeMethod)="searchCustomer($event)" />
 
       <div class="flex items-center my-4 text-gray-400">
         <hr class="flex-grow border-t" />

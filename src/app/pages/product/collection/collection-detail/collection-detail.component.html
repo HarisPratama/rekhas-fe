@@ -1,0 +1,108 @@
+<div class="detail-container">
+  <button class="back-button" (click)="goBack()">← Back to Listing</button>
+
+  <div class="detail-content">
+    <div class="image-box">
+      @if (loading === false && product && product?.full_image_url) {
+        <img [src]="product.full_image_url" alt="product image" />
+      }
+      @if (loading) {
+        <p-skeleton width="350px" height="14rem" />
+      }
+    </div>
+
+    <div class="info-box">
+      @if(!loading) {
+        <h2>{{ product?.fabric }}</h2>
+        <p class="shipment">{{ product?.code }}</p>
+        <p class="price">Rp{{ product?.price | number:'1.0-0' }}</p>
+      } @else {
+        <div class="flex flex-col gap-2 mb-10">
+          <p-skeleton width="10rem" height="20px" />
+          <p-skeleton width="6rem" height="20px" />
+          <p-skeleton width="10rem" height="22px" />
+        </div>
+
+      }
+
+      @if (!loading && product?.images) {
+        <div class="thumbnail-box">
+          <p-carousel [value]="product.images" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="responsiveOptions">
+            <ng-template let-image #item>
+              <img [src]="image.full_image_url" [alt]="product.name" class="w-full rounded-border" />
+            </ng-template>
+          </p-carousel>
+        </div>
+      } @else {
+        <div class="flex gap-4 mb-10">
+          <p-skeleton width="350px" height="8rem" />
+          <p-skeleton width="350px" height="8rem" />
+        </div>
+      }
+
+      @if(!loading) {
+        <h3>📏 Sizes</h3>
+      } @else {
+        <p-skeleton width="6rem" height="20px" />
+      }
+
+      <div class="sizes-grid">
+        <!--        @for (s of product.sizes; track s.name) {-->
+        <!--          <div class="size-card" >-->
+        <!--            <strong>{{ s.name }}</strong>-->
+        <!--            <p>{{ s.value }} cm</p>-->
+        <!--          </div>-->
+        <!--        }-->
+      </div>
+
+      <div class="mt-10">
+        @if (!loading) {
+          <p-card>
+            <div class="flex justify-between items-center">
+              <div class="flex gap-4 items-center">
+                <p-button severity="contrast" icon="pi pi-map-marker"></p-button>
+                <h3>Stock Inventory</h3>
+              </div>
+              <div class="flex gap-2 items-center">
+                <p-tag icon="pi pi-box"></p-tag>
+                <h3>Stocks {{product?.quantity || 0}}</h3>
+              </div>
+            </div>
+
+            <p-divider></p-divider>
+
+            @for (checkpoint of product?.checkpointStocks; track checkpoint.id) {
+              <p-card>
+                <h3>{{checkpoint?.checkpoint?.name}}</h3>
+                <p class="m-0">
+                  Stock: {{checkpoint?.quantity}}
+                </p>
+              </p-card>
+            }
+          </p-card>
+
+          <p-divider></p-divider>
+          <div class="flex gap-10">
+            <div>
+              <p-button severity="secondary" class="w-full" label="Go to Simulation"></p-button>
+            </div>
+            <div>
+              <p-button (click)="visible = true" icon="pi pi-arrow-right" iconPos="right" severity="contrast" class="w-full" label="Create Order"></p-button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog header="Select Category" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem', height: '20rem' }">
+  <div class="flex flex-col gap-2 mb-4">
+    <label class="w-24">Category</label>
+    <p-select [options]="categories" [(ngModel)]="category" placeholder="Select Category"/>
+  </div>
+  <div class="flex justify-end gap-2">
+    <p-button label="Cancel" severity="secondary" (click)="visible = false" />
+    <p-button [disabled]="!category" label="Proceed" (click)="startMeasure()" />
+  </div>
+</p-dialog>

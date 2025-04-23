@@ -1,11 +1,11 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SelectChangeEvent, SelectModule} from 'primeng/select';
 import {InputTextModule} from 'primeng/inputtext';
 import {AccordionModule} from 'primeng/accordion';
 import {FloatLabelModule} from 'primeng/floatlabel';
 import {TextareaModule} from 'primeng/textarea';
-import {Button, ButtonModule} from 'primeng/button';
+import {ButtonModule} from 'primeng/button';
 import {CustomerService} from '../../../services/customer/customer.service';
 import {ProductService} from '../../../services/product/product.service';
 import {ActivatedRoute} from '@angular/router';
@@ -16,6 +16,8 @@ import {ConfirmationService, MessageService} from 'primeng/api';
 import {ToastModule} from 'primeng/toast';
 import {AddToCartModalComponent} from '../../../components/cart/add-to-cart-modal/add-to-cart-modal.component';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {AutoCompleteCompleteEvent, AutoCompleteModule} from 'primeng/autocomplete';
+import {debounceTime, distinctUntilChanged, Subject, Subscription, switchMap} from 'rxjs';
 
 interface SizeMeasurement {
   id: string | null;
@@ -47,16 +49,19 @@ interface Photo {
   templateUrl: './size-measure.component.html',
   styleUrls: ['./size-measure.component.css'],
   providers: [MessageService, ConfirmationService],
-  imports: [FormsModule, AddToCartModalComponent, ConfirmDialogModule, ButtonModule, ToastModule, SelectModule, InputTextModule, AccordionModule, FloatLabelModule, TextareaModule, CurrencyPipe, ReactiveFormsModule],
+  imports: [FormsModule, AddToCartModalComponent, ConfirmDialogModule, ButtonModule, ToastModule, SelectModule, InputTextModule, AccordionModule, FloatLabelModule, TextareaModule, CurrencyPipe, ReactiveFormsModule, AutoCompleteModule],
 })
-export class SizeMeasureComponent implements OnInit {
+export class SizeMeasureComponent implements OnInit, OnDestroy {
   @ViewChild('addToCartModal') public addToCartModal!: AddToCartModalComponent;
   isAddingNewCustomer: boolean = false;
-  selectedCustomer = new FormControl('');
+  selectedCustomer = new FormControl<any>('');
   selectedSizeMeasurement: any = {};
   customers: any[] = [];
   photos: (Photo | null)[] = Array(6).fill(null);
   onAddToCart = false;
+  searchInput$ = new Subject<string>();
+  customerSearchSub!: Subscription;
+  category: null | string = null;
 
   sizeFields = [
     { key: 'length', label: 'Length', value: 0 },
@@ -105,10 +110,12 @@ export class SizeMeasureComponent implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private fb: FormBuilder,
-    private confirmationService: ConfirmationService
-  ) { }
+    private confirmationService: ConfirmationService,
+  ) {
+  }
 
   ngOnInit() {
+    this.category = this.route.snapshot.queryParamMap.get('category');
     this.productId = this.route.snapshot.paramMap.get('id');
     this.formMeasurement = this.fb.group({
       measurements: this.fb.array([] as FormGroup[]) // ✅ didefinisikan sebagai FormArray of FormGroup
@@ -129,8 +136,26 @@ export class SizeMeasureComponent implements OnInit {
       this.customerService.measurements.subscribe(measurement => {
         if(measurement.length > 0) this.setMeasurements(measurement);
       })
+
+      this.customerSearchSub = this.searchInput$
+        .pipe(
+          debounceTime(300),
+          distinctUntilChanged(),
+          switchMap((query: string) => {
+            this.params.search = query;
+            this.customerService.getCustomers(this.params);
+            return this.customerService.customers;
+          })
+        )
+        .subscribe(cust => {
+          this.customers = cust;
+        });
     }
 
+  }
+
+  ngOnDestroy() {
+    this.customerSearchSub?.unsubscribe();
   }
 
   get measurements(): FormArray {
@@ -197,8 +222,12 @@ export class SizeMeasureComponent implements OnInit {
 
   onSelectCustomer(e: SelectChangeEvent) {
     if (e.originalEvent.type == 'click') {
-      this.customerService.getMeasurements(e.value);
+      this.customerService.getMeasurements(e.value.id);
     }
+  }
+
+  searchCustomer(event: AutoCompleteCompleteEvent) {
+    this.searchInput$.next(event.query);
   }
 
   goBack(): void {
@@ -263,10 +292,6 @@ export class SizeMeasureComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
       },
     });
-  }
-
-  get selectedCustomerData() {
-    return this.customers.find(cust => cust.id == this.selectedCustomer.value) ?? { measurements: [] };
   }
 
 
@@ -346,7 +371,7 @@ export class SizeMeasureComponent implements OnInit {
         return true;
       }
     } else {
-      if (!this.selectedCustomer.value || !this.selectedSizeMeasurement?.id) {
+      if (!this.selectedCustomer.value?.id || !this.selectedSizeMeasurement?.id) {
         return true;
       }
     }
@@ -357,8 +382,7 @@ export class SizeMeasureComponent implements OnInit {
 
   addToCart() {
     if (!this.productId) return;
-
-    const customerId = Number(this.selectedCustomer.value);
+    const customerId = Number(this.selectedCustomer.value?.id);
     const productId = Number(this.productId);
     const quantity = 1;
 
@@ -380,6 +404,9 @@ export class SizeMeasureComponent implements OnInit {
         formData.append('productId', productId.toString());
         formData.append('quantity', quantity.toString());
         formData.append('customerMeasurementId', measurementId.toString());
+        if (this.category) {
+          formData.append('collection_category', this.category.toLowerCase());
+        }
 
         files.forEach(photo => {
           if (photo?.file) {
@@ -393,12 +420,16 @@ export class SizeMeasureComponent implements OnInit {
         });
 
       } else {
-        this.cartService.createCart({
+        const payload: any ={
           customerId,
           productId,
           quantity,
           customerMeasurementId: measurementId.toString(),
-        }).subscribe({
+        }
+        if (this.category) {
+          payload['collection_category'] = this.category.toLowerCase();
+        }
+        this.cartService.createCart(payload).subscribe({
           next: (cart) => this.handleAddToCartSuccess(cart),
           error: (err) => this.messageService.add({ detail: err?.error?.message ?? 'Error adding to cart', severity: 'error' })
         });

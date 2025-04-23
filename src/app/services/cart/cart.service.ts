@@ -26,11 +26,12 @@ export class CartService {
     })
   }
 
-  createCart(payload: {customerId: number, productId: number, quantity: number, customerMeasurementId: string}) {
+  createCart(payload: {customerId: number, productId: number, quantity: number, customerMeasurementId: string, collection_category: string}) {
       return this.http.post(`${this.apiUrl}/${payload.customerId}/cart`, {
         productId: payload.productId,
         quantity: payload.quantity,
         customerMeasurementId: payload.customerMeasurementId,
+        collection_category: payload.collection_category,
       })
   }
 

@@ -1,0 +1,33 @@
+<div class="product-grid"
+     infiniteScroll
+     [infiniteScrollDistance]="2"
+     [infiniteScrollThrottle]="200"
+     (scrolled)="onScroll.emit()"
+     [infiniteScrollDisabled]="scrollDisabled"
+>
+  @for (item of products; track item.id) {
+    <div (click)="goToDetail.emit(item.id)" class="product-card">
+      <img [src]="item.full_image_url ?? 'https://placehold.co/40'" alt="product image" />
+      <div class="info">
+        <strong>{{ item.fabric }}</strong>
+        <p class="desc">{{ item.code }}</p>
+        <p class="price">Rp {{ item.price | number:'1.0-0' }}</p>
+        <p class="stock">🧵 {{ item.quantity }}</p>
+      </div>
+    </div>
+  }
+
+  <!-- SKELETON LOADING -->
+  @if (loading) {
+    @for (i of skeletons; track i) {
+      <div class="product-card">
+        <p-skeleton height="150px" class="mb-2"></p-skeleton>
+        <div class="info">
+          <p-skeleton width="80%" class="mb-2"></p-skeleton>
+          <p-skeleton width="60%" class="mb-2"></p-skeleton>
+          <p-skeleton width="40%" class="mb-2"></p-skeleton>
+        </div>
+      </div>
+    }
+  }
+</div>
