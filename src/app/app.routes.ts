@@ -22,6 +22,7 @@ import {UnauthorizedComponent} from './unauthorized/unauthorized.component';
 import {RedirectComponent} from './pages/redirect/redirect.component';
 import {CollectionComponent} from './pages/product/collection/collection.component';
 import {CollectionDetailComponent} from './pages/product/collection/collection-detail/collection-detail.component';
+import {CustomerComponent} from './pages/customer/customer.component';
 
 export const routes: Routes = [
   {
@@ -46,6 +47,7 @@ export const routes: Routes = [
       { path: 'workshop', component: WorkshopComponent, canActivate: [roleGuard('workshop')] },
       { path: 'employee', component: EmployeeComponent, canActivate: [roleGuard('employee')] },
       { path: 'checkpoint', component: CheckpointComponent, canActivate: [roleGuard('checkpoint')] },
+      { path: 'customer', component: CustomerComponent, canActivate: [roleGuard('customer')] },
       { path: 'unauthorized', component: UnauthorizedComponent },
       // Add other children like invoice, delivery, etc.
     ]
