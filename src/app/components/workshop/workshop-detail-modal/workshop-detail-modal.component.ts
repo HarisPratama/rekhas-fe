@@ -182,10 +182,10 @@ export class WorkshopDetailModalComponent implements OnInit, OnDestroy {
   }
 
   getImageType(workshopType: string) {
-    switch (workshopType) {
+    switch (workshopType?.toUpperCase()) {
       case 'SHIRT':
         return '/assets/images/shirt-ss.png'
-      case 'SUITE':
+      case 'SUIT':
         return '/assets/images/suit-ss.png'
       case 'TROUSER':
         return '/assets/images/trouser-ss.png'
@@ -195,11 +195,11 @@ export class WorkshopDetailModalComponent implements OnInit, OnDestroy {
   }
 
   getType(workshopType: string) {
-    switch (workshopType) {
+    switch (workshopType?.toUpperCase()) {
       case 'READY-TO-WEAR':
         return 'SHIRT'
       default:
-        return workshopType
+        return workshopType?.toUpperCase();
     }
   }
 

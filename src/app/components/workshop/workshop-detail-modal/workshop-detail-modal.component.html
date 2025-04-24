@@ -13,10 +13,10 @@
   <!-- Deliver To + Status -->
   <p-card>
     <div class="flex gap-4">
-      <img [src]="getImageType(workshop?.type)" width="50px" alt="">
+      <img [src]="getImageType(workshop?.orderItem?.collection_category || workshop?.type)" width="50px" alt="">
       <div class="flex-1">
         <div class="flex justify-between">
-          <p-badge severity="secondary" [value]="getType(workshop?.type)"></p-badge>
+          <p-badge severity="secondary" [value]="getType(workshop?.orderItem?.collection_category || workshop?.type)"></p-badge>
           <p-badge [severity]="getSeverity(workshop?.status)" [value]="workshop?.status" />
         </div>
         <p>{{workshop?.orderItem?.product?.type}}: {{workshop?.orderItem?.product?.code}}</p>
@@ -35,12 +35,12 @@
       <ng-template #list let-item>
         <div class="flex flex-col gap-2 mt-4">
           <div class="flex gap-4">
-            <img [src]="getImageType(workshop?.type)" width="50px" alt="">
-            <p-badge severity="secondary" [value]="getType(workshop?.type)"></p-badge>
+            <img [src]="getImageType(workshop?.orderItem?.collection_category || workshop?.type)" width="50px" alt="">
+            <p-badge severity="secondary" [value]="getType(workshop?.orderItem?.collection_category || workshop?.type)"></p-badge>
           </div>
           <div class="flex gap-4">
             <img
-              class="rounded-border"
+              class="rounded-border object-cover"
               [src]="item?.full_image_url"
               [alt]="item?.name"
               width="50px"

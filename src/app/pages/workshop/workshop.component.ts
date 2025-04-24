@@ -11,6 +11,7 @@ import {
   WorkshopDetailModalComponent
 } from '../../components/workshop/workshop-detail-modal/workshop-detail-modal.component';
 import {SearchInputComponent} from '../../components/shared/components/search-input/search-input.component';
+import {UpperCasePipe} from '@angular/common';
 
 @Component({
   selector: 'app-workshop',
@@ -20,6 +21,7 @@ import {SearchInputComponent} from '../../components/shared/components/search-in
     GenericTableComponent,
     WorkshopDetailModalComponent,
     SearchInputComponent,
+    UpperCasePipe,
   ],
   templateUrl: './workshop.component.html',
   styleUrl: './workshop.component.css'

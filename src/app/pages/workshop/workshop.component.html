@@ -22,7 +22,7 @@
 >
   <ng-template #rowTemplate let-workshop let-rowIndex="rowIndex">
     <td>{{ rowIndex + 1 }}</td>
-    <td>{{ workshop?.type }}</td>
+    <td>{{ (workshop?.orderItem?.collection_category || workshop?.type) | uppercase }}</td>
     <td>{{ workshop?.notes }}</td>
     <td><img [src]="workshop?.orderItem?.product?.full_image_url" alt="" width="50px"></td>
     <td>
