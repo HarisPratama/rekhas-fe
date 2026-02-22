@@ -1,5 +1,5 @@
 @import "primeicons/primeicons.css";
-@import "tailwindcss";
+/*@import "tailwindcss";*/
 @plugin "tailwindcss-primeui";
 
 .flex {
