@@ -17,11 +17,9 @@ import {CustomerService} from '../../services/customer/customer.service';
 @Component({
   selector: 'app-customer',
   imports: [
-    Badge,
     Button,
     GenericTableComponent,
     SearchInputComponent,
-    UpperCasePipe,
     CurrencyPipe,
   ],
   templateUrl: './customer.component.html',
